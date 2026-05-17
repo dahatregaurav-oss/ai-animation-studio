@@ -1,86 +1,192 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-<meta charset='UTF-8'>
-<meta name='viewport' content='width=device-width,initial-scale=1'>
-<title>AI Animate Studio V17</title>
-<link rel='stylesheet' href='style.css'>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>AI Animate Studio MVP</title>
+<link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-<div class='sidebar'>
-<div class='logo'>⚡ AI Animate Studio</div>
-<button class='active'>Editor</button>
-<button>Scenes</button>
-<button>Characters</button>
-<button>Backgrounds</button>
-<button>Voice AI</button>
-<button>Templates</button>
-<button>Projects</button>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="mark">⚡</div>
+      <div><b>AI Animate Studio</b><small>Low-Cost MVP</small></div>
+    </div>
+    <button class="nav active" data-page="home">🏠 Home</button>
+    <button class="nav" data-page="create">🎬 Create</button>
+    <button class="nav" data-page="editor">🎞 Editor</button>
+    <button class="nav" data-page="projects">📁 Projects</button>
+    <button class="nav" data-page="pricing">💳 Pricing</button>
+    <div class="costBox">
+      <b>Monthly Cost</b>
+      <h2>₹0–₹500</h2>
+      <p>Vercel free + local storage + no paid AI APIs.</p>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <h1 id="pageTitle">AI Animate Studio</h1>
+        <p>Create story-to-cartoon animation demos for promotion.</p>
+      </div>
+      <div class="topBtns">
+        <button onclick="saveProject()">Save</button>
+        <button class="primary" onclick="downloadDemo()">Export Demo</button>
+      </div>
+    </header>
+
+    <section id="home" class="page active">
+      <div class="hero">
+        <div class="heroText">
+          <span class="badge">Promotion Ready MVP</span>
+          <h2>Create AI Cartoon Videos in Minutes</h2>
+          <p>Script paste करा, character निवडा, background/voice set करा आणि professional demo preview तयार करा. हे version ₹0–₹500 मध्ये चालेल.</p>
+          <div class="cta">
+            <button class="primary big" data-page="create">Start Creating</button>
+            <button class="big" onclick="useTemplate('Village Story')">Use Demo Template</button>
+          </div>
+          <div class="chips">
+            <span>Script → Scenes</span><span>Timeline Preview</span><span>Demo Export</span><span>Local Save</span>
+          </div>
+        </div>
+        <div class="phoneMock">
+          <div class="screen village">
+            <img src="assets/characters/village-boy.png" onerror="this.style.display='none'">
+            <p>“गावात एक रहस्यमय घटना घडली…”</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="features">
+        <div><b>🎭 Character Library</b><p>Ready demo characters.</p></div>
+        <div><b>🏞 Background Scenes</b><p>Village, forest, horror, city.</p></div>
+        <div><b>🎙 Voice Style</b><p>Hindi / Marathi / English selector.</p></div>
+        <div><b>⬇ Demo Export</b><p>Download project package for testing.</p></div>
+      </div>
+    </section>
+
+    <section id="create" class="page">
+      <div class="createGrid">
+        <div class="panel">
+          <h2>Create Animation</h2>
+          <label>Project Title</label>
+          <input id="title" value="My Village Animation"/>
+          <label>Story Script</label>
+          <textarea id="script" rows="8">गावात रोहन नावाचा मुलगा राहत होता. एके दिवशी त्याला जंगलात एक रहस्यमय आवाज ऐकू आला. तो घाबरला पण पुढे गेला. शेवटी त्याने गावाला वाचवले.</textarea>
+          <button class="primary full" onclick="autoGenerate()">Generate Scenes</button>
+
+          <h3>Choose Character</h3>
+          <div class="characters" id="characters"></div>
+
+          <div class="two">
+            <div>
+              <label>Background</label>
+              <select id="bg" onchange="updatePreview()">
+                <option value="village">Village</option>
+                <option value="forest">Forest</option>
+                <option value="horror">Horror House</option>
+                <option value="school">School</option>
+                <option value="city">City</option>
+              </select>
+            </div>
+            <div>
+              <label>Voice</label>
+              <select id="voice">
+                <option>Marathi Male Emotional</option>
+                <option>Marathi Female Story</option>
+                <option>Hindi Male Narrator</option>
+                <option>Hindi Female Narrator</option>
+                <option>English Cartoon Voice</option>
+              </select>
+            </div>
+          </div>
+
+          <button class="full" data-page="editor">Open Timeline Editor</button>
+          <button class="full" onclick="saveProject()">Save Project</button>
+        </div>
+
+        <div class="panel previewPanel">
+          <h2>Live Preview</h2>
+          <div id="preview" class="preview village">
+            <img id="charPreview" src="assets/characters/village-boy.png" onerror="this.style.display='none'"/>
+            <div id="emoji">🗣️</div>
+            <p id="subtitle">Generate Scenes click करा.</p>
+          </div>
+          <div class="progressLine"><span id="progressBar"></span></div>
+          <div class="playBtns">
+            <button onclick="playPreview()">▶ Play</button>
+            <button onclick="stopPreview()">⏸ Stop</button>
+            <button onclick="downloadDemo()">⬇ Export</button>
+          </div>
+          <div id="sceneCards" class="sceneCards"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="editor" class="page">
+      <div class="editorLayout">
+        <div class="panel canvasPanel">
+          <div class="editorTop">
+            <h2>Timeline Editor</h2>
+            <div><button onclick="addScene()">+ Scene</button><button class="primary" onclick="playPreview()">Preview</button></div>
+          </div>
+          <div id="editorCanvas" class="canvas village">
+            <img id="editorChar" src="assets/characters/village-boy.png" onerror="this.style.display='none'"/>
+            <p id="editorSubtitle">Timeline preview here.</p>
+          </div>
+        </div>
+
+        <div class="panel settings">
+          <h3>Scene Settings</h3>
+          <label>Selected Scene Text</label>
+          <textarea id="sceneEdit" rows="4"></textarea>
+          <label>Action</label>
+          <select id="action" onchange="updateAction()">
+            <option>Talking</option><option>Walking</option><option>Happy</option><option>Angry</option><option>Scared</option>
+          </select>
+          <label>Export Format</label>
+          <select id="format"><option>9:16 Shorts</option><option>16:9 YouTube</option></select>
+          <button class="primary full" onclick="updateSelectedScene()">Update Scene</button>
+          <button class="full" onclick="duplicateScene()">Duplicate</button>
+          <button class="full danger" onclick="deleteScene()">Delete</button>
+        </div>
+      </div>
+
+      <div class="timeline panel">
+        <div class="trackHead"><b>Timeline Layers</b><span id="sceneCount">0 scenes</span></div>
+        <div class="layer"><span>Scene</span><div id="sceneTrack" class="track"></div></div>
+        <div class="layer"><span>Character</span><div id="characterTrack" class="track"></div></div>
+        <div class="layer"><span>Subtitle</span><div id="subtitleTrack" class="track"></div></div>
+        <div class="layer"><span>Voice</span><div id="voiceTrack" class="track"></div></div>
+      </div>
+    </section>
+
+    <section id="projects" class="page">
+      <div class="panel">
+        <div class="editorTop"><h2>My Projects</h2><button onclick="loadProjects()">Refresh</button></div>
+        <div id="projectsList" class="projects"></div>
+      </div>
+    </section>
+
+    <section id="pricing" class="page">
+      <div class="pricing">
+        <div class="price"><h3>Free MVP</h3><h2>₹0</h2><p>Local save, demo preview, JSON export.</p></div>
+        <div class="price popular"><h3>Creator</h3><h2>₹199/mo</h2><p>Future: HD export, more characters.</p></div>
+        <div class="price"><h3>Pro</h3><h2>₹499/mo</h2><p>Future: AI voice + no watermark.</p></div>
+      </div>
+    </section>
+  </main>
 </div>
 
-<div class='main'>
-<div class='topbar'>
-<h2>AI Animate Studio — V17 Promo Ultra</h2>
-<div>
-<button>Save</button>
-<button class='purple'>Export Video</button>
-</div>
+<div class="mobileNav">
+  <button data-page="home">🏠<span>Home</span></button>
+  <button data-page="create">🎬<span>Create</span></button>
+  <button data-page="editor">🎞<span>Editor</span></button>
+  <button data-page="projects">📁<span>Projects</span></button>
 </div>
 
-<div class='hero'>
-<div class='preview'>
-<div class='preview-top'>
-<span>16:9 Preview</span>
-<span>1080p</span>
-</div>
-<div class='canvas'>
-<div class='subtitle'>“गावात एक रहस्यमय आवाज ऐकू आला...”</div>
-</div>
-<div class='controls'>
-<button>⏮</button>
-<button>▶</button>
-<button>⏭</button>
-</div>
-</div>
-
-<div class='rightpanel'>
-<h3>Scene Settings</h3>
-<label>Scene Name</label>
-<input value='Village Intro'>
-<label>Animation</label>
-<select><option>Fade Up</option></select>
-<label>Voice Style</label>
-<select><option>Marathi Emotional</option></select>
-<label>Export Quality</label>
-<select><option>1080p</option><option>4K</option></select>
-<button class='purple full'>Generate AI Scene</button>
-</div>
-</div>
-
-<div class='timeline'>
-<h3>Professional Timeline Editor</h3>
-<div class='track purpleTrack'>Scene 1 - Village</div>
-<div class='track blueTrack'>Character Animation</div>
-<div class='track greenTrack'>Background Music</div>
-<div class='track redTrack'>Voiceover Track</div>
-</div>
-
-<div class='tools'>
-<div class='card'>🎭 Character AI</div>
-<div class='card'>🖼 AI Background</div>
-<div class='card'>🎙 AI Voice</div>
-<div class='card'>🎵 Music AI</div>
-<div class='card'>🎬 Auto Scene</div>
-<div class='card'>⚡ 1 Click Export</div>
-</div>
-
-<div class='promo'>
-<h1>Create AI Cartoon Videos in Minutes</h1>
-<p>Professional AI Animation SaaS Platform for YouTube & Instagram Creators</p>
-<button class='purple big'>Start Creating</button>
-</div>
-</div>
-
-<script src='script.js'></script>
+<script src="script.js"></script>
 </body>
 </html>
