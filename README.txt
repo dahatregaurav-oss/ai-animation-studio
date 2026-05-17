@@ -1,3 +1,13 @@
-AI Animate Studio V19 Reference Style
-Upload extracted files to GitHub and Vercel will auto deploy.
-Character add timing: first finalize UI flow, then add/replace character PNGs in assets/characters.
+AI Animation Studio V13 Pro
+
+Professional upgrade:
+- Premium sidebar SaaS layout
+- Improved dashboard
+- Polished editor workspace
+- Better project cards
+- Export settings page
+- Mobile responsive layout
+- Firebase login + project save retained
+
+Deploy:
+Extract ZIP and upload folder to Netlify Deploys.
