@@ -1,98 +1,277 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs, query, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyB1MCHdOazDyeDXSXWMnwVHD2fo7oOdr9g",
-  authDomain: "ai-animation-studio-e963c.firebaseapp.com",
-  projectId: "ai-animation-studio-e963c",
-  storageBucket: "ai-animation-studio-e963c.firebasestorage.app",
-  messagingSenderId: "1043459063205",
-  appId: "1:1043459063205:web:dec1e034a51ac3ded4fc4c"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const provider = new GoogleAuthProvider();
-
-const chars = [
-  {name:"Village Boy", img:"assets/characters/village-boy.png"},
-  {name:"Village Woman", img:"assets/characters/village-woman.png"},
-  {name:"Old Grandmother", img:"assets/characters/grandmother.png"},
-  {name:"Villain Man", img:"assets/characters/villain-man.png"}
+const chars=[
+ {name:"Village Boy",img:"assets/characters/village-boy.png"},
+ {name:"Village Woman",img:"assets/characters/village-woman.png"},
+ {name:"Grandmother",img:"assets/characters/grandmother.png"},
+ {name:"Villain Man",img:"assets/characters/villain-man.png"}
 ];
 
-let currentUser=null, selectedSceneIndex=-1, scenes=[], playTimer=null;
+let scenes=[];
+let selectedScene=0;
+let selectedChar=chars[0];
+let bgMode="preset";
+let uploadedBg=null;
+let timer=null;
+let charImages={};
+let bgPresets={};
+const canvas=document.getElementById("videoCanvas");
+const ctx=canvas.getContext("2d");
+
 function $(id){return document.getElementById(id)}
 
-window.go=function(id,btn=null){
-  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-  $(id).classList.add("active");
-  document.querySelectorAll(".nav").forEach(n=>n.classList.remove("active"));
-  if(btn) btn.classList.add("active");
-  $("pageTitle").textContent = id[0].toUpperCase()+id.slice(1);
-  $("pageSub").textContent = id==="editor" ? "Build scene-by-scene animation videos." : "Create and manage your AI animation videos.";
-};
-window.goByName=function(id){go(id); document.querySelectorAll(".nav").forEach(n=>{if(n.textContent.toLowerCase().includes(id)) n.classList.add("active")})}
-
-window.loginWithGoogle=async()=>{try{await signInWithPopup(auth,provider)}catch(e){alert("Login error: "+e.message)}}
-window.logoutUser=async()=>{await signOut(auth)}
-onAuthStateChanged(auth,async user=>{
-  currentUser=user;
-  $("userStatus").textContent=user?(user.displayName||user.email):"Not logged in";
-  $("loginBtn").style.display=user?"none":"inline-block";
-  $("logoutBtn").style.display=user?"inline-block":"none";
-  if(user) await loadProjects(); else renderProjects([]);
-});
-
-function setup(){
-  $("characterSelect").innerHTML=chars.map((c,i)=>`<option value="${i}">${c.name}</option>`).join("");
-  $("characterGrid").innerHTML=chars.map((c,i)=>`<div class="char-card"><div class="imgbox"><img src="${c.img}"></div><h3>${c.name}</h3><button class="primary full" onclick="selectChar(${i})">Use Character</button></div>`).join("");
-  updatePreview(); renderTimeline(); renderProjects([]);
+function init(){
+ renderChars();
+ generateScenes();
+ resizeCanvas();
+ loadAssets();
 }
-window.selectChar=function(i){$("characterSelect").value=i; updatePreview(); goByName("editor")}
 
-function formScene(){
-  const c=chars[Number($("characterSelect").value)]||chars[0];
-  return {title:$("sceneTitle").value, dialogue:$("sceneDialogue").value, bg:$("backgroundSelect").value, character:c.name, characterImg:c.img, action:$("actionSelect").value, position:$("positionSelect").value, voice:$("voiceSelect").value}
+function loadAssets(){
+ chars.forEach(c=>{
+  const img=new Image();
+  img.src=c.img;
+  charImages[c.name]=img;
+ });
 }
-window.updatePreview=function(scene=null){
-  const s=scene||formScene(), canvas=$("canvas");
-  canvas.className=`canvas bg-${s.bg} ${s.action} pos-${s.position}`;
-  $("canvasCharacter").src=s.characterImg; $("canvasSubtitle").textContent=s.dialogue; $("actionBadge").textContent=s.action.toUpperCase();
-  $("faceEmoji").textContent={talking:"🗣️",walking:"🚶",idle:"🙂",happy:"😊",angry:"😠",sad:"😢",scared:"😨"}[s.action]||"😊";
+
+function renderChars(){
+ $("chars").innerHTML=chars.map((c,i)=>`<div class="char ${i===0?'active':''}" onclick="selectCharacter(${i})"><img src="${c.img}" onerror="this.style.display='none'"><b>${c.name}</b></div>`).join("");
 }
-window.addScene=function(){scenes.push(formScene()); selectedSceneIndex=scenes.length-1; renderTimeline(); updatePreview(scenes[selectedSceneIndex]);}
-window.updateSelectedScene=function(){if(selectedSceneIndex<0){alert("Add/select scene first");return} scenes[selectedSceneIndex]=formScene(); renderTimeline(); updatePreview(scenes[selectedSceneIndex]);}
-window.deleteSelectedScene=function(){if(selectedSceneIndex<0)return; scenes.splice(selectedSceneIndex,1); selectedSceneIndex=scenes.length?0:-1; renderTimeline(); if(selectedSceneIndex>=0) updatePreview(scenes[selectedSceneIndex]);}
+
+function selectCharacter(i){
+ selectedChar=chars[i];
+ document.querySelectorAll(".char").forEach((el,idx)=>el.classList.toggle("active",idx===i));
+ scenes.forEach(s=>{s.character=selectedChar.name;s.characterImg=selectedChar.img});
+ drawScene(scenes[selectedScene]||null);
+ renderTimeline();
+}
+
+function generateScenes(){
+ const parts=$("scriptText").value.split(/[.।\n]+/).map(s=>s.trim()).filter(Boolean).slice(0,8);
+ scenes=parts.map((text,i)=>({
+   text,
+   bg:$("bgSelect").value,
+   bgImage: uploadedBg,
+   character:selectedChar.name,
+   characterImg:selectedChar.img,
+   action:i%2?"Walking":"Talking"
+ }));
+ selectedScene=0;
+ renderTimeline();
+ selectScene(0);
+}
+
 function renderTimeline(){
-  $("timelineInfo").textContent=scenes.length+" scenes";
-  $("timeline").innerHTML=scenes.map((s,i)=>`<div class="clip ${i===selectedSceneIndex?'active':''}" onclick="selectScene(${i})"><b>${s.title}</b><small>${s.character} • ${s.action}</small></div>`).join("");
+ $("timeline").innerHTML=scenes.map((s,i)=>`<div class="clip ${i===selectedScene?'active':''}" onclick="selectScene(${i})"><b>Scene ${i+1}</b><small>${s.text.slice(0,30)}...</small></div>`).join("");
 }
-window.selectScene=function(i){selectedSceneIndex=i; const s=scenes[i]; $("sceneTitle").value=s.title; $("sceneDialogue").value=s.dialogue; $("backgroundSelect").value=s.bg; $("characterSelect").value=chars.findIndex(c=>c.name===s.character); $("actionSelect").value=s.action; $("positionSelect").value=s.position; $("voiceSelect").value=s.voice; renderTimeline(); updatePreview(s);}
-window.playTimeline=function(){if(!scenes.length){alert("Add scene first");return} let i=0; clearInterval(playTimer); selectScene(0); playTimer=setInterval(()=>{i=(i+1)%scenes.length; selectScene(i)},2200)}
-window.pauseTimeline=()=>clearInterval(playTimer)
-window.resetTimeline=()=>{clearInterval(playTimer); if(scenes.length) selectScene(0)}
-window.smartPrompt=function(){$("projectTitle").value=$("aiPrompt").value; $("sceneDialogue").value="या topic वर एक engaging animation scene तयार करा: "+$("aiPrompt").value; goByName("editor");}
 
-window.saveEditorProject=async function(){
-  if(!currentUser){alert("Login first"); return}
-  if(!scenes.length){alert("Add at least one scene"); return}
-  await addDoc(collection(db,"projects"),{uid:currentUser.uid,email:currentUser.email||"",title:$("projectTitle").value,scenes,thumbnailImg:scenes[0].characterImg,createdAt:serverTimestamp()});
-  alert("Project saved ✅"); await loadProjects(); goByName("dashboard");
+function selectScene(i){
+ selectedScene=i;
+ const s=scenes[i];
+ if(!s)return;
+ $("sceneEdit").value=s.text;
+ $("actionSelect").value=s.action;
+ drawScene(s);
+ renderTimeline();
 }
-window.loadProjects=async function(){
-  if(!currentUser){renderProjects([]);return}
-  const q=query(collection(db,"projects"),where("uid","==",currentUser.uid)); const snap=await getDocs(q); const arr=[]; snap.forEach(d=>arr.push({id:d.id,...d.data()})); arr.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0)); renderProjects(arr);
+
+function resizeCanvas(){
+ const format=$("formatSelect").value;
+ if(format==="9:16"){
+  canvas.width=720; canvas.height=1280;
+ }else{
+  canvas.width=1280; canvas.height=720;
+ }
+ drawScene(scenes[selectedScene]||null);
 }
-function renderProjects(arr){
-  $("projectCount").textContent=arr.length;
-  const html=arr.length?arr.map(p=>`<div class="project-card"><div class="thumb"><img src="${p.thumbnailImg||'assets/characters/village-boy.png'}"></div><h3>${p.title}</h3><p>${p.scenes?p.scenes.length+" scenes":"Saved project"}</p></div>`).join(""):`<div class="project-card"><div class="thumb">🖼️</div><h3>No projects yet</h3><p>Create your first professional editor project.</p></div>`;
-  $("dashboardProjects").innerHTML=html; $("projectsList").innerHTML=html;
+
+function selectPresetBackground(){
+ bgMode="preset";
+ uploadedBg=null;
+ scenes.forEach(s=>{s.bg=$("bgSelect").value;s.bgImage=null});
+ drawScene(scenes[selectedScene]||null);
 }
-window.downloadProject=function(){
-  const count=Number(localStorage.getItem("downloads")||"0")+1; localStorage.setItem("downloads",count); $("downloadCount").textContent=count;
-  const blob=new Blob([JSON.stringify({title:$("projectTitle").value,scenes,note:"Real MP4 export needs backend."},null,2)],{type:"application/json"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="ai-animation-project.json"; a.click();
+
+function uploadBackground(e){
+ const file=e.target.files[0];
+ if(!file)return;
+ const reader=new FileReader();
+ reader.onload=()=>{
+  const img=new Image();
+  img.onload=()=>{
+   uploadedBg=img;
+   bgMode="upload";
+   scenes.forEach(s=>s.bgImage=img);
+   drawScene(scenes[selectedScene]||null);
+  };
+  img.src=reader.result;
+ };
+ reader.readAsDataURL(file);
 }
-document.addEventListener("DOMContentLoaded",()=>{setup(); $("downloadCount").textContent=localStorage.getItem("downloads")||"0";});
+
+function drawBackground(s){
+ const w=canvas.width,h=canvas.height;
+ if(s && s.bgImage){
+  ctx.drawImage(s.bgImage,0,0,w,h);
+  ctx.fillStyle="rgba(0,0,0,0.12)";
+  ctx.fillRect(0,0,w,h);
+  return;
+ }
+ const bg=(s&&s.bg)||$("bgSelect").value;
+ let sky="#8bd3ff", ground="#22c55e", mid="#f9e29f";
+ if(bg==="forest"){sky="#064e3b";mid="#14532d";ground="#052e16"}
+ if(bg==="horror"){sky="#111827";mid="#374151";ground="#020617"}
+ if(bg==="school"){sky="#93c5fd";mid="#fef3c7";ground="#c084fc"}
+ if(bg==="city"){sky="#60a5fa";mid="#1e293b";ground="#0f172a"}
+ const grad=ctx.createLinearGradient(0,0,0,h);
+ grad.addColorStop(0,sky); grad.addColorStop(.55,mid); grad.addColorStop(.7,ground);
+ ctx.fillStyle=grad; ctx.fillRect(0,0,w,h);
+ // decorative simple scene elements
+ ctx.fillStyle="rgba(0,0,0,.18)";
+ for(let i=0;i<5;i++){
+   ctx.beginPath();
+   ctx.arc((i+1)*w/6,h*.62,60,0,Math.PI*2);
+   ctx.fill();
+ }
+}
+
+function drawScene(s,progress=0){
+ ctx.clearRect(0,0,canvas.width,canvas.height);
+ drawBackground(s);
+ const w=canvas.width,h=canvas.height;
+ if(!s){
+  ctx.fillStyle="#fff";ctx.font="bold 42px Arial";ctx.textAlign="center";ctx.fillText("Generate Scenes click करा",w/2,h/2);
+  return;
+ }
+ const img=charImages[s.character] || charImages[selectedChar.name];
+ let cw=w*(canvas.width<canvas.height?.45:.24);
+ let ch=cw*1.4;
+ let x=w/2-cw/2;
+ let y=h*.72-ch;
+ const action=(s.action||"Talking").toLowerCase();
+ if(action==="walking") x+=Math.sin(progress*Math.PI*2)*w*.08;
+ if(action==="happy") y+=Math.sin(progress*Math.PI*2)*-20;
+ if(action==="angry"||action==="scared") x+=Math.sin(progress*Math.PI*8)*8;
+ if(img && img.complete && img.naturalWidth){
+  ctx.drawImage(img,x,y,cw,ch);
+ }else{
+  ctx.fillStyle="#111827";ctx.fillRect(x,y,cw,ch);
+ }
+ // subtitle box
+ ctx.fillStyle="rgba(0,0,0,.72)";
+ const boxH=canvas.width<canvas.height?120:76;
+ roundRect(ctx,w*.06,h-boxH-30,w*.88,boxH,18,true);
+ ctx.fillStyle="#fff";
+ ctx.textAlign="center";
+ ctx.font=`bold ${canvas.width<canvas.height?34:32}px Arial`;
+ wrapText(ctx,s.text,w/2,h-boxH/2-18,w*.82,canvas.width<canvas.height?42:38);
+}
+
+function roundRect(ctx,x,y,w,h,r,fill){
+ ctx.beginPath();
+ ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();
+ if(fill)ctx.fill();
+}
+
+function wrapText(ctx,text,x,y,maxWidth,lineHeight){
+ const words=text.split(" ");
+ let line="", lines=[];
+ words.forEach(word=>{
+  const test=line+word+" ";
+  if(ctx.measureText(test).width>maxWidth && line){lines.push(line); line=word+" ";}
+  else line=test;
+ });
+ lines.push(line);
+ const start=y-(lines.length-1)*lineHeight/2;
+ lines.forEach((ln,i)=>ctx.fillText(ln,x,start+i*lineHeight));
+}
+
+function playPreview(){
+ if(!scenes.length) generateScenes();
+ let i=0, frame=0;
+ clearInterval(timer);
+ const speed=Number($("speedSelect").value);
+ timer=setInterval(()=>{
+  selectedScene=i;
+  drawScene(scenes[i],(frame%60)/60);
+  $("progress").style.width=((i+1)/scenes.length*100)+"%";
+  frame++;
+  if(frame%Math.round(speed/33)===0){i=(i+1)%scenes.length; renderTimeline();}
+ },33);
+}
+
+function stopPreview(){clearInterval(timer)}
+
+function updateCurrentScene(){
+ if(!scenes.length)generateScenes();
+ scenes[selectedScene].text=$("sceneEdit").value;
+ scenes[selectedScene].action=$("actionSelect").value;
+ drawScene(scenes[selectedScene]);
+ renderTimeline();
+}
+
+function duplicateScene(){
+ if(!scenes.length)return;
+ scenes.splice(selectedScene+1,0,{...scenes[selectedScene]});
+ renderTimeline();
+}
+
+function deleteScene(){
+ if(!scenes.length)return;
+ scenes.splice(selectedScene,1);
+ selectedScene=Math.max(0,selectedScene-1);
+ renderTimeline();
+ drawScene(scenes[selectedScene]||null);
+}
+
+function saveProject(){
+ if(!scenes.length)generateScenes();
+ const data={script:$("scriptText").value,scenes,character:selectedChar.name,bg:$("bgSelect").value,format:$("formatSelect").value};
+ localStorage.setItem("aiAnimateWorkingProject",JSON.stringify(data));
+ alert("Project saved locally ✅");
+}
+
+function loadProject(){
+ const data=JSON.parse(localStorage.getItem("aiAnimateWorkingProject")||"null");
+ if(!data){alert("No saved project found");return;}
+ $("scriptText").value=data.script||"";
+ scenes=data.scenes||[];
+ selectedScene=0;
+ renderTimeline();
+ drawScene(scenes[0]||null);
+}
+
+async function exportVideo(){
+ if(!scenes.length)generateScenes();
+ $("loading").style.display="grid";
+ resizeCanvas();
+ const stream=canvas.captureStream(30);
+ const recorder=new MediaRecorder(stream,{mimeType:"video/webm"});
+ const chunks=[];
+ recorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};
+ recorder.onstop=()=>{
+  const blob=new Blob(chunks,{type:"video/webm"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="ai-animate-studio-video.webm";
+  a.click();
+  $("loading").style.display="none";
+ };
+ recorder.start();
+ let sceneIndex=0;
+ let frame=0;
+ const framesPerScene=90;
+ const totalFrames=framesPerScene*scenes.length;
+ const render=setInterval(()=>{
+  const s=scenes[sceneIndex];
+  drawScene(s,(frame%framesPerScene)/framesPerScene);
+  $("progress").style.width=((frame+1)/totalFrames*100)+"%";
+  frame++;
+  if(frame%framesPerScene===0)sceneIndex++;
+  if(frame>=totalFrames){
+    clearInterval(render);
+    setTimeout(()=>recorder.stop(),250);
+  }
+ },33);
+}
+
+init();
