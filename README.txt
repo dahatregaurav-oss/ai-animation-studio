@@ -1,2 +1,2 @@
-AI Animation Studio V14 Pro Timeline Editor
-Extract and upload files to GitHub. Vercel will auto deploy.
+AI Animation Studio V15 Simple AutoDraft-style UI
+Extract and upload to GitHub. Vercel auto deploys.
