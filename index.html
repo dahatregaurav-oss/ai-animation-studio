@@ -1,184 +1,86 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>AI Animation Studio V16 Pro Editor</title>
-<link rel="stylesheet" href="style.css">
+<meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>AI Animate Studio V17</title>
+<link rel='stylesheet' href='style.css'>
 </head>
 <body>
-<div class="app">
-  <aside class="leftbar">
-    <div class="logo">🎬</div>
-    <a class="nav">⌂<span>Dashboard</span></a>
-    <a class="nav active">🎞<span>Editor</span></a>
-    <a class="nav">▣<span>Scenes</span></a>
-    <a class="nav">♙<span>Characters</span></a>
-    <a class="nav">▧<span>Backgrounds</span></a>
-    <a class="nav">🧰<span>Props</span></a>
-    <a class="nav">♪<span>Music</span></a>
-    <a class="nav">T<span>Text</span></a>
-    <a class="nav">☁<span>Uploads</span></a>
-    <a class="nav">🎙<span>Voiceover</span></a>
-    <a class="nav">▣<span>Projects</span></a>
-    <button class="help">? Help</button>
-  </aside>
-
-  <main class="workspace">
-    <header class="topbar">
-      <div class="brand">
-        <span class="clap">🎬</span>
-        <b>AI Animation Studio</b>
-        <em>V16</em>
-      </div>
-      <div class="project-title">
-        <span>‹</span>
-        <strong>Village Story</strong>
-        <button>✎</button>
-      </div>
-      <div class="top-actions">
-        <button>💾 Save</button>
-        <button>↶ Undo</button>
-        <button class="disabled">↷ Redo</button>
-        <button class="upgrade">♛ Upgrade</button>
-        <button class="exportTop">⇩ Export Video</button>
-        <button>🔔</button>
-        <button>👤</button>
-      </div>
-    </header>
-
-    <section class="editor-grid">
-      <div class="center-area">
-        <div class="preview-card">
-          <div class="preview-tools">
-            <button>Preview Quality</button>
-            <button>1080p⌄</button>
-            <span></span>
-            <button>▭ 16:9</button>
-          </div>
-          <div class="canvas village-bg">
-            <img id="mainCharacter" class="character" src="assets/characters/village-boy.png" alt="Character">
-            <div class="subtitle">एक छोटा सा गाँव था...</div>
-          </div>
-          <div class="scrubbar"><span></span></div>
-          <div class="player-row">
-            <span>00:00:02 / 00:00:45</span>
-            <div class="player-controls">
-              <button>|‹</button><button>‹</button><button class="play">▶</button><button>›</button><button>›|</button>
-            </div>
-            <div class="zoom-controls">
-              <button>⌕</button><button>⊕</button><button>⛶</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="edit-actions">
-          <button class="purple">＋ Add Scene</button>
-          <button>⧉ Duplicate</button>
-          <button>🗑 Delete</button>
-          <button>✂ Split</button>
-          <button>⇧ Import</button>
-          <button>🎙 Voiceover</button>
-          <button>▷ Preview</button>
-        </div>
-
-        <div class="timeline">
-          <div class="time-ruler"><span>0s</span><span>10s</span><span>20s</span><span>30s</span><span>40s</span><span>50s</span></div>
-          <div class="layer-row">
-            <div class="layer-name">▣ Scenes <small>👁</small></div>
-            <div class="clips scenes">
-              <div class="scene-thumb active">1<small>5.0s</small></div>
-              <div class="scene-thumb">2<small>6.0s</small></div>
-              <div class="scene-thumb">3<small>5.0s</small></div>
-              <div class="scene-thumb">4<small>6.0s</small></div>
-              <div class="scene-thumb">5<small>5.0s</small></div>
-              <div class="scene-thumb">6<small>6.0s</small></div>
-              <div class="add-box">＋</div>
-            </div>
-          </div>
-          <div class="layer-row">
-            <div class="layer-name">T Text <small>👁</small></div>
-            <div class="clips"><div class="clip green">एक छोटा सा गाँव था...</div><div class="clip green">उस गांव में एक गरीब लड़का रहता था।</div><div class="clip green">वह बहुत मेहनती था।</div><div class="clip green">एक दिन उसे जंगल में...</div></div>
-          </div>
-          <div class="layer-row">
-            <div class="layer-name">♙ Character <small>👁</small></div>
-            <div class="clips"><div class="clip brown">👦 Raju</div><div class="clip brown">👦 Raju</div><div class="clip brown">👦 Raju</div><div class="clip brown">👦 Raju</div></div>
-          </div>
-          <div class="layer-row">
-            <div class="layer-name">▧ Background <small>👁</small></div>
-            <div class="clips"><div class="clip blue">Village Day</div><div class="clip blue">Village Road</div><div class="clip blue">House Interior</div><div class="clip blue">Forest</div><div class="clip blue">Sunset</div></div>
-          </div>
-          <div class="layer-row">
-            <div class="layer-name">♪ Music <small>👁</small></div>
-            <div class="clips"><div class="clip purpleAudio">♫ Village Background Music.mp3</div></div>
-          </div>
-          <div class="layer-row">
-            <div class="layer-name">🎙 Voiceover <small>👁</small></div>
-            <div class="clips"><div class="clip cyanAudio">♬ Story Voiceover.mp3</div></div>
-          </div>
-        </div>
-
-        <div class="bottom-tools">
-          <button>👦 <b>Character</b><small>100+</small></button>
-          <button>🏞 <b>Background</b><small>100+</small></button>
-          <button>🔧 <b>Props</b><small>80+</small></button>
-          <button>📋 <b>Templates</b><small>50+</small></button>
-          <button>🖼 <b>Image Gen</b><small>AI</small></button>
-          <button>🎥 <b>Video Gen</b><small>AI</small></button>
-          <button>🎙 <b>AI Voice</b><small>AI</small></button>
-          <button>🎵 <b>Music</b><small>AI</small></button>
-        </div>
-      </div>
-
-      <aside class="right-panel">
-        <div class="tabs"><button class="active">Scene</button><button>Element</button><button>Audio</button></div>
-        <div class="scene-settings card">
-          <h3>Scene 1 <span>✎</span><b>⋮</b></h3>
-          <div class="scene-preview village-bg"><img src="assets/characters/village-boy.png"></div>
-          <label>Duration</label>
-          <select><option>5.0s</option><option>6.0s</option><option>10.0s</option></select>
-          <label>Transition</label>
-          <select><option>Fade In</option><option>Slide Left</option><option>Zoom In</option></select>
-          <label>Background</label>
-          <div class="inline"><span class="bg-mini"></span><button>Change</button></div>
-          <label>Scene Text</label>
-          <textarea>एक छोटा सा गाँव था...</textarea>
-          <small class="count">19/500</small>
-          <label>Text Style</label>
-          <div class="inline"><select><option>Roboto Devanagari</option></select><select><option>48</option></select><input type="color" value="#ffffff"></div>
-          <div class="format-buttons"><button>B</button><button>I</button><button>U</button><button>≡</button><button class="active">☰</button></div>
-          <label>Animation</label>
-          <select><option>Fade Up</option><option>Typewriter</option><option>Pop</option></select>
-          <button class="apply">⇩ Apply to All Scenes</button>
-        </div>
-
-        <div class="export-settings card">
-          <h3>Export Settings</h3>
-          <label>Aspect Ratio</label>
-          <div class="ratio"><button class="active">▭ 16:9</button><button>▯ 9:16</button><button>□ 1:1</button></div>
-          <label>Quality</label>
-          <select><option>1080p (Full HD)</option><option>720p</option><option>4K</option></select>
-          <div class="toggle-row"><span>Watermark</span><label class="switch"><input type="checkbox" checked><i></i></label></div>
-          <button class="exportFull" onclick="downloadProject()">⇩ Export Video</button>
-          <button class="exportProject" onclick="downloadProject()">⌂ Export Project</button>
-          <p>Estimated Time: ~ 2-3 min</p>
-        </div>
-      </aside>
-    </section>
-
-    <section class="extra-bar">
-      <b>⭐ Extra Features (V16)</b>
-      <span>✅ Timeline Editor</span>
-      <span>✅ Video Export UI</span>
-      <span>✅ Auto Scene Generator</span>
-      <span>✅ AI Voice + Music</span>
-      <span>✅ Scene Transitions</span>
-      <span>✅ Subtitle Support</span>
-      <button>Ready to Create! 🚀</button>
-    </section>
-  </main>
+<div class='sidebar'>
+<div class='logo'>⚡ AI Animate Studio</div>
+<button class='active'>Editor</button>
+<button>Scenes</button>
+<button>Characters</button>
+<button>Backgrounds</button>
+<button>Voice AI</button>
+<button>Templates</button>
+<button>Projects</button>
 </div>
 
-<script src="script.js"></script>
+<div class='main'>
+<div class='topbar'>
+<h2>AI Animate Studio — V17 Promo Ultra</h2>
+<div>
+<button>Save</button>
+<button class='purple'>Export Video</button>
+</div>
+</div>
+
+<div class='hero'>
+<div class='preview'>
+<div class='preview-top'>
+<span>16:9 Preview</span>
+<span>1080p</span>
+</div>
+<div class='canvas'>
+<div class='subtitle'>“गावात एक रहस्यमय आवाज ऐकू आला...”</div>
+</div>
+<div class='controls'>
+<button>⏮</button>
+<button>▶</button>
+<button>⏭</button>
+</div>
+</div>
+
+<div class='rightpanel'>
+<h3>Scene Settings</h3>
+<label>Scene Name</label>
+<input value='Village Intro'>
+<label>Animation</label>
+<select><option>Fade Up</option></select>
+<label>Voice Style</label>
+<select><option>Marathi Emotional</option></select>
+<label>Export Quality</label>
+<select><option>1080p</option><option>4K</option></select>
+<button class='purple full'>Generate AI Scene</button>
+</div>
+</div>
+
+<div class='timeline'>
+<h3>Professional Timeline Editor</h3>
+<div class='track purpleTrack'>Scene 1 - Village</div>
+<div class='track blueTrack'>Character Animation</div>
+<div class='track greenTrack'>Background Music</div>
+<div class='track redTrack'>Voiceover Track</div>
+</div>
+
+<div class='tools'>
+<div class='card'>🎭 Character AI</div>
+<div class='card'>🖼 AI Background</div>
+<div class='card'>🎙 AI Voice</div>
+<div class='card'>🎵 Music AI</div>
+<div class='card'>🎬 Auto Scene</div>
+<div class='card'>⚡ 1 Click Export</div>
+</div>
+
+<div class='promo'>
+<h1>Create AI Cartoon Videos in Minutes</h1>
+<p>Professional AI Animation SaaS Platform for YouTube & Instagram Creators</p>
+<button class='purple big'>Start Creating</button>
+</div>
+</div>
+
+<script src='script.js'></script>
 </body>
 </html>
