@@ -1,22 +1,15 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs, query, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-const firebaseConfig={apiKey:"AIzaSyB1MCHdOazDyeDXSXWMnwVHD2fo7oOdr9g",authDomain:"ai-animation-studio-e963c.firebaseapp.com",projectId:"ai-animation-studio-e963c",storageBucket:"ai-animation-studio-e963c.firebasestorage.app",messagingSenderId:"1043459063205",appId:"1:1043459063205:web:dec1e034a51ac3ded4fc4c"};
-const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),provider=new GoogleAuthProvider();
-const chars=[{name:"Village Boy",img:"assets/characters/village-boy.png"},{name:"Village Woman",img:"assets/characters/village-woman.png"},{name:"Old Grandmother",img:"assets/characters/grandmother.png"},{name:"Villain Man",img:"assets/characters/villain-man.png"}];
-let currentUser=null,selectedChar=chars[0],scenes=[];const $=id=>document.getElementById(id);
-window.showPage=id=>{document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));$(id).classList.add("active");window.scrollTo({top:0,behavior:"smooth"});if(id==="dashboard")loadProjects()};
-window.loginWithGoogle=async()=>{try{await signInWithPopup(auth,provider)}catch(e){alert("Login error: "+e.message)}};window.logoutUser=async()=>signOut(auth);
-onAuthStateChanged(auth,async user=>{currentUser=user;$("userStatus").textContent=user?(user.displayName||user.email):"Not logged in";$("loginBtn").style.display=user?"none":"inline-block";$("logoutBtn").style.display=user?"inline-block":"none";if(user)await loadProjects()});
-function renderCharacters(){$("characterGrid").innerHTML=chars.map((c,i)=>`<div class="charCard ${i===0?'active':''}" onclick="selectCharacter(${i})"><div class="imgBox"><img src="${c.img}"></div><b>${c.name}</b></div>`).join("")}
-window.selectCharacter=i=>{selectedChar=chars[i]||chars[0];document.querySelectorAll(".charCard").forEach((el,idx)=>el.classList.toggle("active",idx===i));$("previewCharacter").src=selectedChar.img;$("homeChar").src=selectedChar.img;$("selectedCharName").textContent=selectedChar.name};
-window.nextStep=n=>{document.querySelectorAll(".step").forEach(s=>s.classList.remove("active"));$("step"+n).classList.add("active");document.querySelectorAll(".progress div").forEach(p=>p.classList.remove("active"));$("p"+n).classList.add("active")};
-function splitScenes(){return $("scriptInput").value.split(/[.।\n]+/).map(s=>s.trim()).filter(Boolean).slice(0,6)}
-function emojiFor(t){t=t.toLowerCase();if(t.includes("घाबर")||t.includes("रहस्यमय"))return"😨";if(t.includes("रड"))return"😢";return"🗣️"}
-window.generatePreview=()=>{scenes=splitScenes();const bg=$("backgroundSelect").value,voice=$("voiceLang").value+" • "+$("voiceType").value;$("previewScreen").className="previewScreen bg-"+bg;$("previewCharacter").src=selectedChar.img;$("selectedSettings").textContent=voice+" • "+$("backgroundSelect").selectedOptions[0].text;$("sceneList").innerHTML=scenes.map((s,i)=>`<div class="scene"><b>Scene ${i+1}</b><p>${s}</p><small>${selectedChar.name} • ${voice}</small></div>`).join("");let i=0;function play(){let text=scenes[i]||"Preview ready";$("subtitle").textContent=text;$("emoji").textContent=emojiFor(text);i=(i+1)%(scenes.length||1)}play();clearInterval(window.previewTimer);window.previewTimer=setInterval(play,1800)};
-window.useTemplate=name=>{const map={"Village Moral Story":"गावात एक गरीब मुलगा राहत होता. लोक त्याची थट्टा करत होते. पण त्याने मेहनत सोडली नाही. शेवटी त्याने गावाला अभिमान वाटेल असे काम केले.","Horror Short":"रात्री गावाजवळच्या जंगलातून आवाज येत होता. एक मुलगा तिथे गेला. त्याला एक जुने घर दिसले.","Kids Funny Story":"एक चतुर मुलगा रोज नवे प्रयोग करत होता. त्याचा मित्र सतत हसत होता. शेवटी दोघांनी मजेदार cartoon video तयार केला.","Explainer Video":"तुमची समस्या दाखवा. मग solution सोप्या भाषेत explain करा. शेवटी viewer ला action घ्यायला सांगा."};$("projectTitle").value=name;$("scriptInput").value=map[name]||"";showPage("create");nextStep(1)};
-window.saveProject=async()=>{if(!currentUser){alert("Please login first.");return}if(!scenes.length)generatePreview();await addDoc(collection(db,"projects"),{uid:currentUser.uid,email:currentUser.email||"",title:$("projectTitle").value,script:$("scriptInput").value,scenes,character:selectedChar.name,characterImg:selectedChar.img,voice:$("voiceLang").value+" "+$("voiceType").value,background:$("backgroundSelect").value,format:$("formatSelect").value,createdAt:serverTimestamp()});alert("Project saved ✅");await loadProjects();showPage("dashboard")};
-window.loadProjects=async()=>{if(!currentUser){renderProjects([]);return}const q=query(collection(db,"projects"),where("uid","==",currentUser.uid));const snap=await getDocs(q);const arr=[];snap.forEach(d=>arr.push({id:d.id,...d.data()}));arr.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));renderProjects(arr)};
-function renderProjects(arr){$("projectCount").textContent=arr.length;$("projectsList").innerHTML=arr.length?arr.map(p=>`<div class="projectCard"><div class="thumb"><img src="${p.characterImg||'assets/characters/village-boy.png'}"></div><h3>${p.title}</h3><p>${p.scenes?p.scenes.length:0} scenes • ${p.character||''}</p></div>`).join(""):`<div class="projectCard"><div class="thumb">🖼️</div><h3>No projects yet</h3><p>Create your first animation.</p></div>`}
-window.downloadDemo=()=>{if(!scenes.length)generatePreview();const count=Number(localStorage.getItem("downloads")||"0")+1;localStorage.setItem("downloads",count);$("downloadCount").textContent=count;const data={title:$("projectTitle").value,character:selectedChar.name,voice:$("voiceLang").value+" "+$("voiceType").value,background:$("backgroundSelect").value,format:$("formatSelect").value,scenes,note:"Demo export. Real MP4 needs backend/rendering."};const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="ai-animation-simple-project.json";a.click()};
-document.addEventListener("DOMContentLoaded",()=>{renderCharacters();$("downloadCount").textContent=localStorage.getItem("downloads")||"0"});
+const data={title:"AI Animation Studio V16",scenes:["एक छोटा सा गाँव था...","उस गांव में एक गरीब लड़का रहता था।","वह बहुत मेहनती था।"],tracks:["Text","Character","Background","Music","Voiceover"]};
+function downloadProject(){
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="ai-animation-studio-v16-project.json";
+  a.click();
+}
+document.querySelectorAll(".scene-thumb").forEach((el,i)=>{
+  el.addEventListener("click",()=>{
+    document.querySelectorAll(".scene-thumb").forEach(x=>x.classList.remove("active"));
+    el.classList.add("active");
+    document.querySelector(".subtitle").textContent=data.scenes[i%data.scenes.length];
+  });
+});
