@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AI Animation Studio V13 Pro</title>
+<link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar">
+    <div class="logo"><span>🎬</span><div><b>AI Animation Studio</b><small>Creator Workspace</small></div></div>
+    <button class="nav active" onclick="go('dashboard', this)">🏠 Dashboard</button>
+    <button class="nav" onclick="go('editor', this)">🎞️ Video Editor</button>
+    <button class="nav" onclick="go('characters', this)">🎭 Characters</button>
+    <button class="nav" onclick="go('projects', this)">📁 Projects</button>
+    <button class="nav" onclick="go('export', this)">⬇ Export</button>
+    <button class="nav" onclick="go('pricing', this)">💳 Pricing</button>
+    <div class="sidebar-card">
+      <b>Credits</b>
+      <div class="credit-ring">25</div>
+      <small>Free plan credits</small>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <h1 id="pageTitle">Dashboard</h1>
+        <p id="pageSub">Create and manage your AI animation videos.</p>
+      </div>
+      <div class="top-actions">
+        <span id="userStatus">Not logged in</span>
+        <button id="loginBtn" onclick="loginWithGoogle()">Login</button>
+        <button id="logoutBtn" onclick="logoutUser()" style="display:none">Logout</button>
+        <button class="primary" onclick="goByName('editor')">New Video</button>
+      </div>
+    </header>
+
+    <section id="dashboard" class="page active">
+      <div class="hero-card">
+        <div>
+          <p class="badge">Professional creator dashboard</p>
+          <h2>Create AI animation videos from scripts</h2>
+          <p>Write a story, choose a character, set action, add backgrounds and build scenes on a timeline.</p>
+          <div class="prompt-bar">
+            <input id="aiPrompt" value="Create a village moral story video">
+            <button onclick="smartPrompt()">Generate</button>
+          </div>
+        </div>
+        <div class="hero-preview">
+          <img src="assets/characters/village-boy.png">
+          <div>Scene preview</div>
+        </div>
+      </div>
+
+      <div class="metrics">
+        <div class="metric"><b id="projectCount">0</b><span>Projects</span></div>
+        <div class="metric"><b>4</b><span>Characters</span></div>
+        <div class="metric"><b>7</b><span>Actions</span></div>
+        <div class="metric"><b id="downloadCount">0</b><span>Downloads</span></div>
+      </div>
+
+      <div class="tool-grid">
+        <div class="tool" onclick="goByName('editor')"><span>🎞️</span><b>Animation Studio</b><p>Create scenes and timeline</p></div>
+        <div class="tool" onclick="goByName('characters')"><span>🎭</span><b>Character Studio</b><p>Select village characters</p></div>
+        <div class="tool" onclick="alert('AI voice preview V14 मध्ये add करू.')"><span>🎙️</span><b>AI Voice</b><p>Hindi Marathi English</p></div>
+        <div class="tool" onclick="goByName('export')"><span>⬇️</span><b>Export</b><p>Download project package</p></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h3>Recent Projects</h3><button onclick="loadProjects()">Refresh</button></div>
+        <div id="dashboardProjects" class="project-grid"></div>
+      </div>
+    </section>
+
+    <section id="editor" class="page">
+      <div class="editor">
+        <div class="editor-left panel">
+          <h3>Scene Builder</h3>
+          <label>Project Title</label><input id="projectTitle" value="New Animation Project">
+          <label>Scene Title</label><input id="sceneTitle" value="Scene 1">
+          <label>Dialogue / Subtitle</label><textarea id="sceneDialogue" rows="4">गावात एक मुलगा राहत होता. तो खूप स्वप्न पाहायचा.</textarea>
+          <div class="row">
+            <div><label>Background</label><select id="backgroundSelect" onchange="updatePreview()"><option value="village">Village</option><option value="forest">Forest</option><option value="school">School</option><option value="temple">Temple</option><option value="horror">Horror House</option><option value="city">City</option></select></div>
+            <div><label>Character</label><select id="characterSelect" onchange="updatePreview()"></select></div>
+          </div>
+          <div class="row">
+            <div><label>Action</label><select id="actionSelect" onchange="updatePreview()"><option value="talking">Talking</option><option value="walking">Walking</option><option value="idle">Idle</option><option value="happy">Happy</option><option value="angry">Angry</option><option value="sad">Sad</option><option value="scared">Scared</option></select></div>
+            <div><label>Position</label><select id="positionSelect" onchange="updatePreview()"><option value="center">Center</option><option value="left">Left</option><option value="right">Right</option></select></div>
+          </div>
+          <label>Voice</label><select id="voiceSelect"><option>Marathi Male Emotional</option><option>Marathi Female Emotional</option><option>Hindi Male Narrator</option><option>Hindi Female Narrator</option><option>English Cartoon Voice</option></select>
+          <div class="stack">
+            <button class="primary" onclick="addScene()">Add Scene</button>
+            <button onclick="updateSelectedScene()">Update Scene</button>
+            <button onclick="deleteSelectedScene()">Delete Scene</button>
+            <button onclick="saveEditorProject()">Save to Firebase</button>
+          </div>
+        </div>
+
+        <div class="editor-center">
+          <div class="canvas-toolbar">
+            <button onclick="playTimeline()">▶ Play</button>
+            <button onclick="pauseTimeline()">⏸ Pause</button>
+            <button onclick="resetTimeline()">⟲ Reset</button>
+            <button onclick="downloadProject()">Download</button>
+          </div>
+          <div id="canvas" class="canvas bg-village talking pos-center">
+            <img id="canvasCharacter" src="assets/characters/village-boy.png">
+            <span id="actionBadge">Talking</span>
+            <span id="faceEmoji">🗣️</span>
+            <div id="canvasSubtitle">गावात एक मुलगा राहत होता. तो खूप स्वप्न पाहायचा.</div>
+          </div>
+          <div class="timeline-box panel">
+            <div class="panel-head"><h3>Timeline</h3><span id="timelineInfo">0 scenes</span></div>
+            <div id="timeline" class="timeline"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="characters" class="page">
+      <div class="panel"><h3>Character Library</h3><div id="characterGrid" class="character-grid"></div></div>
+    </section>
+
+    <section id="projects" class="page">
+      <div class="panel"><div class="panel-head"><h3>My Projects</h3><button onclick="loadProjects()">Refresh</button></div><div id="projectsList" class="project-grid"></div></div>
+    </section>
+
+    <section id="export" class="page">
+      <div class="panel export-panel">
+        <h3>Export Settings</h3>
+        <label>Format</label><select><option>9:16 Shorts</option><option>16:9 YouTube</option></select>
+        <label>Quality</label><select><option>720p Demo</option><option>1080p</option><option>4K</option></select>
+        <label>Watermark</label><select><option>Free plan watermark</option><option>No watermark</option></select>
+        <button class="primary full" onclick="downloadProject()">Download Project Package</button>
+        <p>Real MP4 export साठी backend/rendering V14 मध्ये लागेल.</p>
+      </div>
+    </section>
+
+    <section id="pricing" class="page">
+      <div class="pricing">
+        <div class="price"><h3>Free</h3><h2>₹0</h2><p>Basic preview, watermark.</p></div>
+        <div class="price featured"><h3>Creator</h3><h2>₹199/mo</h2><p>HD export, more credits.</p></div>
+        <div class="price"><h3>Pro</h3><h2>₹499/mo</h2><p>1080p/4K, priority.</p></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<button class="chat" onclick="alert('AI assistant V14 मध्ये add करू.')">💬</button>
+<script type="module" src="script.js"></script>
+</body>
+</html>
