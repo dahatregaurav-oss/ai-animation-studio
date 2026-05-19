@@ -1,9 +1,1052 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AI Animate Studio V26</title><link rel="stylesheet" href="style.css"></head><body>
-<div class="app"><aside class="sidebar"><div class="brand">⚡ <b>AI Animate</b><span>Studio V26</span></div><button onclick="showPage('dashboard')">🏠 Dashboard</button><button onclick="showPage('editor')">🎬 Animation Studio</button><button onclick="showPage('projects')">📁 Projects</button><button onclick="showPage('adminLogin')">🔐 Admin Login</button><button class="adminOnly" onclick="showPage('admin')">🛠 Admin Panel</button><button class="adminOnly" onclick="adminLogout()">🚪 Logout</button><div class="profile"><b>Gaurav Dahatre</b><small>Free Plan • 25 credits</small><button>Upgrade</button></div></aside>
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Animate Studio V26 — Gaurav Dahatre</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Orbitron:wght@700;900&family=Noto+Sans+Devanagari:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#040610;--panel:#09111f;--card:#0e1a2e;--border:#1a2d4a;
+  --accent:#00d4ff;--accent2:#7c3aed;--accent3:#f59e0b;
+  --green:#00ff88;--red:#ff4466;--text:#e2eaf4;--muted:#5a7a9a;
+  --glow:0 0 20px #00d4ff44;--glow2:0 0 20px #7c3aed44;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:15px;overflow:hidden}
+button,input,textarea,select{font:inherit;color:var(--text)}
+button{cursor:pointer;border:none;background:var(--card);border-radius:10px;padding:9px 16px;font-weight:600;transition:.2s;border:1px solid var(--border)}
+button:hover{border-color:var(--accent);color:var(--accent);box-shadow:var(--glow)}
+.btn-primary{background:linear-gradient(135deg,#7c3aed,#00d4ff);border:none;color:#fff;font-weight:700}
+.btn-primary:hover{box-shadow:0 0 28px #00d4ff88;transform:translateY(-1px)}
+.btn-danger{background:#7f1d1d;border-color:#ff4466}
+.btn-danger:hover{box-shadow:0 0 20px #ff446688}
+.full{width:100%;margin-top:8px}
+
+/* ── APP LAYOUT ── */
+.app{display:flex;height:100vh;overflow:hidden}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:220px;min-width:220px;background:var(--panel);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;padding:16px 12px;gap:4px;
+  overflow:hidden;
+}
+.brand{
+  font-family:'Orbitron',monospace;font-size:15px;font-weight:900;
+  color:var(--accent);padding:10px 8px 20px;letter-spacing:2px;
+  text-shadow:var(--glow);
+}
+.brand small{display:block;font-family:'Rajdhani',sans-serif;font-size:11px;color:var(--muted);letter-spacing:1px;margin-top:2px}
+.nav-btn{
+  display:flex;align-items:center;gap:10px;padding:10px 12px;
+  border-radius:10px;font-weight:600;font-size:14px;letter-spacing:.5px;
+  background:transparent;border:1px solid transparent;
+  transition:.2s;text-align:left;
+}
+.nav-btn:hover,.nav-btn.active{background:var(--card);border-color:var(--border);color:var(--accent)}
+.nav-btn .icon{font-size:18px;width:22px;text-align:center}
+.adminOnly{display:none}
+.profile{
+  margin-top:auto;background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:12px;
+}
+.profile .name{font-weight:700;font-size:14px}
+.profile .plan{font-size:11px;color:var(--accent3);margin-top:2px}
+.profile .credits{font-size:12px;color:var(--muted)}
+
+/* ── PAGES ── */
+main{flex:1;overflow:hidden;position:relative}
+.page{display:none;height:100%;overflow:auto;padding:24px}
+.page.active{display:block}
+
+/* ── DASHBOARD ── */
+.hero{max-width:900px;margin:40px auto 30px;text-align:center}
+.hero h1{font-family:'Orbitron',monospace;font-size:28px;font-weight:900;
+  background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;line-height:1.3;margin-bottom:10px}
+.hero p{color:var(--muted);font-size:16px}
+.prompt-bar{
+  display:flex;background:#ffffff0e;border:1px solid var(--border);
+  border-radius:999px;padding:10px 10px 10px 20px;
+  margin:20px auto;max-width:700px;gap:8px;
+}
+.prompt-bar input{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-size:15px}
+.tools-grid{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:20px 0}
+.tool-card{
+  width:105px;background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:14px 10px;text-align:center;cursor:pointer;
+  transition:.2s;
+}
+.tool-card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:var(--glow)}
+.tool-card .emoji{font-size:28px;display:block;margin-bottom:6px}
+.tool-card span{font-size:12px;font-weight:600;color:var(--muted)}
+.section-head{display:flex;justify-content:space-between;align-items:center;margin:24px 0 12px;max-width:900px;margin-left:auto;margin-right:auto}
+.section-head h2{font-size:18px;font-weight:700}
+.projects-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;max-width:900px;margin:0 auto}
+.proj-card{
+  height:110px;background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:14px;display:flex;align-items:flex-end;
+  cursor:pointer;transition:.2s;
+}
+.proj-card:hover{border-color:var(--accent2);box-shadow:var(--glow2)}
+.proj-card b{font-size:13px}
+
+/* ── EDITOR ── */
+#editor{padding:0}
+.editor-layout{
+  display:grid;grid-template-columns:68px 1fr 290px;
+  height:100vh;gap:0;
+}
+.left-tools{
+  background:var(--panel);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;padding:8px;gap:6px;
+}
+.left-tools button{
+  background:transparent;border:1px solid transparent;
+  flex-direction:column;display:flex;align-items:center;
+  padding:10px 4px;gap:4px;border-radius:10px;font-size:10px;font-weight:600;
+}
+.left-tools button:hover,.left-tools button.active{background:var(--card);border-color:var(--border);color:var(--accent)}
+.left-tools .big{font-size:20px}
+
+.center-col{
+  display:flex;flex-direction:column;background:var(--bg);padding:12px;gap:8px;
+  overflow:hidden;
+}
+.editor-top{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.editor-top .title{flex:1;font-weight:700;color:var(--accent);font-family:'Orbitron',monospace;font-size:13px}
+.canvas-wrap{flex:1;display:flex;justify-content:center;align-items:center;min-height:0;position:relative}
+canvas{
+  border-radius:12px;border:2px solid var(--border);
+  max-width:100%;max-height:100%;background:#0a0f1a;
+}
+.playbar{
+  display:flex;gap:6px;justify-content:center;flex-wrap:wrap;flex-shrink:0;padding:6px 0;
+}
+.playbar button{padding:7px 14px;font-size:13px}
+
+/* ACTION BAR */
+.action-bar{
+  display:flex;gap:6px;flex-wrap:wrap;justify-content:center;
+  padding:6px 0;border-top:1px solid var(--border);flex-shrink:0;
+}
+.action-btn{
+  padding:7px 13px;border-radius:8px;font-size:12px;font-weight:700;
+  background:var(--card);border:1px solid var(--border);
+  transition:.18s;letter-spacing:.4px;
+}
+.action-btn:hover,.action-btn.active{
+  background:var(--accent2);border-color:var(--accent2);color:#fff;
+  box-shadow:var(--glow2);
+}
+.action-btn.active{background:linear-gradient(135deg,#7c3aed,#00d4ff)}
+
+/* TIMELINE */
+.timeline{
+  height:150px;flex-shrink:0;background:#040810;border-radius:12px;
+  border:1px solid var(--border);padding:8px;overflow:auto;
+}
+.tl-row{display:grid;grid-template-columns:72px 1fr;gap:6px;margin:4px 0}
+.tl-label{font-size:11px;color:var(--muted);display:flex;align-items:center;font-weight:600}
+.tl-track{display:flex;gap:6px;overflow:auto;background:#09111f;border-radius:8px;padding:5px;min-height:34px}
+.clip{
+  min-width:110px;background:#1a1040;border:1px solid #312e81;
+  border-radius:7px;padding:6px 10px;font-size:11px;cursor:pointer;white-space:nowrap;
+}
+.clip.active{border-color:var(--accent);background:#1a3050;color:var(--accent)}
+.audio-track{background:linear-gradient(90deg,#0f4c6e,#4a1572)!important}
+
+/* RIGHT PANEL */
+.right-panel{
+  background:var(--panel);border-left:1px solid var(--border);
+  padding:14px;overflow:auto;display:flex;flex-direction:column;gap:10px;
+}
+.right-panel h3{font-size:13px;font-weight:700;color:var(--accent);
+  letter-spacing:.8px;text-transform:uppercase;padding-bottom:6px;
+  border-bottom:1px solid var(--border);
+}
+textarea,input[type=text],select{
+  width:100%;background:#060d18;color:var(--text);
+  border:1px solid var(--border);border-radius:10px;padding:9px;
+  outline:none;transition:.15s;resize:none;
+}
+textarea:focus,input[type=text]:focus,select:focus{border-color:var(--accent);box-shadow:var(--glow)}
+.cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.char-card{
+  background:var(--card);border:2px solid transparent;border-radius:12px;
+  padding:8px;text-align:center;cursor:pointer;transition:.2s;position:relative;
+}
+.char-card:hover,.char-card.active{border-color:var(--accent2);box-shadow:var(--glow2)}
+.char-card canvas{width:60px;height:80px;border-radius:6px;background:#060d18}
+.char-card b{display:block;font-size:11px;margin-top:4px}
+
+/* CHARACTER ANIMATION ON CANVAS */
+/* The character is drawn via JS ctx with frame cycling */
+
+/* ── CHARACTER SVG SPRITES (drawn in JS) ── */
+
+/* ── ADMIN ── */
+.admin-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;max-width:1100px;margin:0 auto}
+.panel{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px}
+.panel h2{font-size:18px;font-weight:700;margin-bottom:16px;color:var(--accent)}
+.upload-label{
+  display:block;background:#060d18;border:2px dashed var(--border);
+  border-radius:14px;padding:16px;text-align:center;cursor:pointer;
+  transition:.2s;margin:8px 0;
+}
+.upload-label:hover{border-color:var(--accent)}
+.upload-label input{display:none}
+.preview-box{height:130px;background:#060d18;border-radius:12px;display:grid;place-items:center;border:1px solid var(--border);margin:8px 0}
+.preview-box img{max-height:120px;max-width:100%;border-radius:8px}
+.asset-item{background:#060d18;padding:9px 12px;border-radius:10px;margin:6px 0;font-size:13px;border:1px solid var(--border)}
+
+/* LOGIN */
+.login-wrap{max-width:420px;margin:80px auto}
+
+/* LOADING */
+.loading{
+  display:none;position:fixed;inset:0;background:#000c;
+  place-items:center;z-index:999;flex-direction:column;gap:14px;
+}
+.loading.show{display:flex}
+.loading-ring{
+  width:60px;height:60px;border-radius:50%;
+  border:4px solid var(--border);border-top-color:var(--accent);
+  animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:#040610}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+
+/* CHARACTER PREVIEW ANIMATION (CSS) */
+.char-anim{
+  display:inline-block;
+  image-rendering:pixelated;
+  animation:charBob .6s ease-in-out infinite alternate;
+}
+@keyframes charBob{0%{transform:translateY(0)}100%{transform:translateY(-4px)}}
+
+@media(max-width:900px){
+  .sidebar{display:none}
+  .editor-layout{grid-template-columns:1fr}
+  .right-panel,.left-tools{display:none}
+  .admin-grid,.projects-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="brand">⚡ AI ANIMATE<small>STUDIO V26</small></div>
+  <button class="nav-btn active" onclick="showPage('dashboard',this)"><span class="icon">🏠</span>Dashboard</button>
+  <button class="nav-btn" onclick="showPage('editor',this);initEditor()"><span class="icon">🎬</span>Animation Studio</button>
+  <button class="nav-btn" onclick="showPage('projects',this)"><span class="icon">📁</span>Projects</button>
+  <button class="nav-btn adminOnly" onclick="showPage('admin',this)"><span class="icon">🛠</span>Admin Panel</button>
+  <button class="nav-btn" onclick="showPage('adminLogin',this)"><span class="icon">🔐</span>Admin Login</button>
+  <button class="nav-btn adminOnly" onclick="adminLogout()"><span class="icon">🚪</span>Logout</button>
+  <div class="profile">
+    <div class="name">Gaurav Dahatre</div>
+    <div class="plan">⭐ Creator Plan</div>
+    <div class="credits">💎 25 Credits</div>
+  </div>
+</aside>
+
+<!-- MAIN -->
 <main>
-<section id="dashboard" class="page active"><div class="hero"><h1>Monetize & Grow Faster on YouTube</h1><p>Create animated story videos with characters, backgrounds, audio and export.</p><div class="prompt"><input id="dashPrompt" value="Create village story animation"><button onclick="startEditor()">➤</button></div><div class="tools"><div onclick="startEditor()">🏃<b>Animation Studio</b></div><div onclick="showPage('admin')">🖼<b>Add Assets</b></div><div onclick="showPage('editor')">🎙<b>Audio Upload</b></div><div onclick="startEditor()">📹<b>AI Video</b></div><div onclick="generateStory()">📄<b>Story Writer</b></div><div onclick="seoHelp()">🧲<b>SEO Writer</b></div></div></div><div class="head"><h2>Recent Projects</h2><button onclick="showPage('projects')">View All</button></div><div id="recent" class="projects"></div></section>
-<section id="editor" class="page"><div class="editor"><div class="leftTools"><button onclick="panelTab('characters')">🏃<span>Character</span></button><button onclick="panelTab('backgrounds')">🏞<span>Media</span></button><button onclick="addTemplate()">🎞<span>Templates</span></button><button onclick="panelTab('audio')">🎙<span>AI Voice</span></button><button onclick="addTextScene()">🔤<span>Text</span></button></div><div class="center"><div class="top"><button onclick="showPage('dashboard')">← Dashboard</button><b>New Project</b><button onclick="addScene()">+ Scene</button><button onclick="saveProject()">💾 Save</button><button class="primary" onclick="exportVideo()">⬇ Download</button></div><canvas id="canvas" width="1280" height="720"></canvas><div class="playbar"><button onclick="prevScene()">⏮</button><button onclick="playPreview()">▶ Play</button><button onclick="stopPreview()">⏸ Stop</button><button onclick="nextScene()">⏭</button><button onclick="zoomOut()">−</button><button onclick="zoomIn()">+</button></div><div class="actionPanel"><button onclick="setAction('Idle')">🙂 Idle</button><button onclick="setAction('Talking')">🗣 Talking</button><button onclick="setAction('Walking')">🚶 Walking</button><button onclick="setAction('Happy')">😊 Happy</button><button onclick="setAction('Angry')">😠 Angry</button><button onclick="setAction('Scared')">😨 Scared</button><label>🎵 Audio<input type="file" accept="audio/*" onchange="uploadAudio(event)"></label><audio id="audio" controls></audio></div><div class="timeline"><div class="row"><b>Scenes</b><div id="sceneTrack"></div></div><div class="row"><b>Character</b><div id="charTrack"></div></div><div class="row"><b>Action</b><div id="actionTrack"></div></div><div class="row"><b>Audio</b><div id="audioTrack" class="audioTrack">No audio</div></div></div></div><div class="right"><h3 id="panelTitle">Scene Editor</h3><textarea id="sceneEdit"></textarea><select id="pos" onchange="updateScene()"><option value="center">Center</option><option value="left">Left</option><option value="right">Right</option></select><button class="primary full" onclick="updateScene()">Update Scene</button><button class="full" onclick="duplicateScene()">Duplicate Scene</button><button class="danger full" onclick="deleteScene()">Delete Scene</button><h3>Characters</h3><div id="chars" class="cards"></div><h3>Backgrounds</h3><div id="bgs" class="cards"></div></div></div></section>
-<section id="projects" class="page"><div class="panel"><h2>Saved Projects</h2><div id="projectsList"></div><button onclick="clearProjects()" class="danger">Clear Projects</button></div></section>
-<section id="adminLogin" class="page"><div class="panel login"><h2>Admin Login</h2><input id="pin" type="password" placeholder="PIN 1234"><button class="primary full" onclick="adminLogin()">Login</button></div></section>
-<section id="admin" class="page"><div class="adminGrid"><div class="panel"><h2>Add Character</h2><input id="charName" placeholder="Character name"><label class="upload">Upload Character PNG<input type="file" accept="image/*" onchange="pickChar(event)"></label><div id="charPreview" class="preview"></div><button class="primary full" onclick="addChar()">Add Character</button></div><div class="panel"><h2>Add Background</h2><input id="bgName" placeholder="Background name"><label class="upload">Upload Background<input type="file" accept="image/*" onchange="pickBg(event)"></label><div id="bgPreview" class="preview"></div><button class="primary full" onclick="addBg()">Add Background</button></div><div class="panel"><h2>Admin Assets</h2><button class="danger full" onclick="clearAssets()">Clear Added Assets</button><h3>Characters</h3><div id="adminChars"></div><h3>Backgrounds</h3><div id="adminBgs"></div></div></div></section>
-</main></div><div id="loading" class="loading">Rendering video...</div><script src="script.js"></script></body></html>
+
+<!-- DASHBOARD -->
+<section id="dashboard" class="page active">
+  <div class="hero">
+    <h1>ANIMATE YOUR STORIES<br>WITH AI POWER</h1>
+    <p>Characters · Backgrounds · Actions · Audio · Export — सब कुछ एक जगह</p>
+    <div class="prompt-bar">
+      <input id="dashPrompt" placeholder="Type your story idea... e.g. village hero fights villain">
+      <button class="btn-primary" onclick="startEditor()">▶ Create</button>
+    </div>
+    <div class="tools-grid">
+      <div class="tool-card" onclick="startEditor()"><span class="emoji">🏃</span><span>Animation<br>Studio</span></div>
+      <div class="tool-card" onclick="showPage('admin');initAdmin()"><span class="emoji">🖼</span><span>Add<br>Assets</span></div>
+      <div class="tool-card" onclick="startEditor()"><span class="emoji">🎙</span><span>AI<br>Voice</span></div>
+      <div class="tool-card" onclick="startEditor()"><span class="emoji">📹</span><span>AI<br>Video</span></div>
+      <div class="tool-card" onclick="generateStory()"><span class="emoji">📖</span><span>Story<br>Writer</span></div>
+      <div class="tool-card" onclick="seoHelp()"><span class="emoji">🧲</span><span>SEO<br>Writer</span></div>
+    </div>
+  </div>
+  <div class="section-head"><h2>Recent Projects</h2><button onclick="showPage('projects',null)">View All →</button></div>
+  <div id="recent" class="projects-grid"></div>
+</section>
+
+<!-- EDITOR -->
+<section id="editor" class="page">
+<div class="editor-layout">
+  <!-- LEFT TOOLS -->
+  <div class="left-tools">
+    <button onclick="panelTab('characters')" title="Characters"><span class="big">🏃</span>Char</button>
+    <button onclick="panelTab('backgrounds')" title="Backgrounds"><span class="big">🏞</span>BG</button>
+    <button onclick="addScene()" title="Add Scene"><span class="big">➕</span>Scene</button>
+    <button onclick="panelTab('audio')" title="Audio"><span class="big">🎙</span>Audio</button>
+    <button onclick="addTextScene()" title="Add Text"><span class="big">🔤</span>Text</button>
+    <button onclick="addTemplate()" title="Template"><span class="big">🎞</span>Tmpl</button>
+  </div>
+
+  <!-- CENTER CANVAS -->
+  <div class="center-col">
+    <div class="editor-top">
+      <button onclick="showPage('dashboard',null)">← Back</button>
+      <span class="title">🎬 ANIMATION STUDIO V26</span>
+      <button onclick="saveProject()">💾 Save</button>
+      <button class="btn-primary" onclick="exportVideo()">⬇ Export</button>
+    </div>
+
+    <div class="canvas-wrap">
+      <canvas id="canvas" width="1280" height="720"></canvas>
+    </div>
+
+    <!-- ACTION BAR -->
+    <div class="action-bar" id="actionBar">
+      <button class="action-btn" onclick="setAction('Idle')">🙂 Idle</button>
+      <button class="action-btn" onclick="setAction('Walk')">🚶 Walk</button>
+      <button class="action-btn" onclick="setAction('Talk')">🗣 Talk</button>
+      <button class="action-btn" onclick="setAction('Jump')">⬆ Jump</button>
+      <button class="action-btn" onclick="setAction('Fight')">👊 Fight</button>
+      <button class="action-btn" onclick="setAction('Dance')">💃 Dance</button>
+      <button class="action-btn" onclick="setAction('Hold')">🤝 Hold</button>
+      <button class="action-btn" onclick="setAction('Happy')">😊 Happy</button>
+      <button class="action-btn" onclick="setAction('Scared')">😨 Scared</button>
+      <button class="action-btn" onclick="setAction('Angry')">😠 Angry</button>
+      <label class="action-btn" style="padding:7px 13px">
+        🎵 Audio<input type="file" accept="audio/*" onchange="uploadAudio(event)" style="display:none">
+      </label>
+    </div>
+
+    <div class="playbar">
+      <button onclick="prevScene()">⏮</button>
+      <button class="btn-primary" onclick="playPreview()">▶ Play</button>
+      <button onclick="stopPreview()">⏸ Pause</button>
+      <button onclick="nextScene()">⏭</button>
+      <button onclick="zoomOut()">－</button>
+      <button onclick="zoomIn()">＋</button>
+      <audio id="audio" controls style="height:32px;max-width:200px;display:none"></audio>
+    </div>
+
+    <!-- TIMELINE -->
+    <div class="timeline">
+      <div class="tl-row"><div class="tl-label">Scenes</div><div class="tl-track" id="sceneTrack"></div></div>
+      <div class="tl-row"><div class="tl-label">Action</div><div class="tl-track" id="actionTrack"></div></div>
+      <div class="tl-row"><div class="tl-label">Audio</div><div class="tl-track audio-track" id="audioTrack">No audio loaded</div></div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="right-panel">
+    <div>
+      <h3>Scene Editor</h3>
+      <textarea id="sceneEdit" rows="3" placeholder="Scene text / dialogue..." onchange="updateScene()"></textarea>
+      <select id="pos" onchange="updateScene()">
+        <option value="center">Center</option>
+        <option value="left">Left</option>
+        <option value="right">Right</option>
+      </select>
+      <button class="btn-primary full" onclick="updateScene()">✅ Update Scene</button>
+      <button class="full" onclick="duplicateScene()">📋 Duplicate</button>
+      <button class="btn-danger full" onclick="deleteScene()">🗑 Delete Scene</button>
+    </div>
+    <div>
+      <h3>Characters</h3>
+      <div id="chars" class="cards-grid"></div>
+    </div>
+    <div>
+      <h3>Backgrounds</h3>
+      <div id="bgs" class="cards-grid"></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects" class="page">
+  <div class="panel" style="max-width:800px;margin:30px auto">
+    <h2>📁 Saved Projects</h2>
+    <div id="projectsList"></div>
+    <button class="btn-danger full" onclick="clearProjects()">Clear All Projects</button>
+  </div>
+</section>
+
+<!-- ADMIN LOGIN -->
+<section id="adminLogin" class="page">
+  <div class="login-wrap">
+    <div class="panel">
+      <h2>🔐 Admin Login</h2>
+      <input type="password" id="pin" placeholder="Enter PIN (1234)" style="margin:12px 0">
+      <button class="btn-primary full" onclick="adminLogin()">Login</button>
+    </div>
+  </div>
+</section>
+
+<!-- ADMIN PANEL -->
+<section id="admin" class="page">
+  <div class="admin-grid">
+    <div class="panel">
+      <h2>➕ Add Character</h2>
+      <input type="text" id="charName" placeholder="Character name" style="margin:8px 0">
+      <label class="upload-label">📤 Upload Character PNG<input type="file" accept="image/*" onchange="pickChar(event)"></label>
+      <div id="charPreview" class="preview-box">No image</div>
+      <button class="btn-primary full" onclick="addChar()">Add Character</button>
+    </div>
+    <div class="panel">
+      <h2>🏞 Add Background</h2>
+      <input type="text" id="bgName" placeholder="Background name" style="margin:8px 0">
+      <label class="upload-label">📤 Upload Background<input type="file" accept="image/*" onchange="pickBg(event)"></label>
+      <div id="bgPreview" class="preview-box">No image</div>
+      <button class="btn-primary full" onclick="addBg()">Add Background</button>
+    </div>
+    <div class="panel">
+      <h2>🗂 Asset Manager</h2>
+      <button class="btn-danger full" onclick="clearAssets()" style="margin-bottom:14px">🗑 Clear Custom Assets</button>
+      <h3 style="color:var(--accent);font-size:13px;margin-bottom:6px">Characters</h3>
+      <div id="adminChars"></div>
+      <h3 style="color:var(--accent);font-size:13px;margin:10px 0 6px">Backgrounds</h3>
+      <div id="adminBgs"></div>
+    </div>
+  </div>
+</section>
+
+</main>
+</div>
+
+<!-- LOADING -->
+<div class="loading" id="loading">
+  <div class="loading-ring"></div>
+  <div style="font-family:'Orbitron',monospace;color:var(--accent)">Exporting Video...</div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════
+const PIN = "1234";
+let admin = localStorage.getItem("admin") === "1";
+let zoom = 1, animTimer = null, playTimer = null;
+let selectedScene = 0, audioUrl = null, tempChar = null, tempBg = null;
+let framePhase = 0, editorInited = false;
+const imgs = {};
+
+// ── CHARACTER DEFINITIONS (with action-frame logic) ──
+const defaultChars = [
+  {
+    name:"Village Hero",
+    img:"assets/characters/village-hero/idle.png",
+    idle:"assets/characters/village-hero/idle.png",
+    talk:"assets/characters/village-hero/talk.png",
+    happy:"assets/characters/village-hero/happy.png",
+    frames:["assets/characters/village-hero/walk1.png","assets/characters/village-hero/walk2.png","assets/characters/village-hero/walk3.png","assets/characters/village-hero/walk4.png","assets/characters/village-hero/walk5.png"]
+  },
+  {name:"Village Woman",img:"assets/characters/village-woman.png"},
+  {name:"Grandmother",img:"assets/characters/grandmother.png"},
+  {name:"Villain",img:"assets/characters/villain-man.png"},
+];
+const defaultBgs = [
+  {name:"Village",type:"preset",value:"village"},
+  {name:"Forest",type:"preset",value:"forest"},
+  {name:"Night",type:"preset",value:"horror"},
+  {name:"City",type:"preset",value:"city"},
+  {name:"School",type:"preset",value:"school"},
+  {name:"Desert",type:"preset",value:"desert"},
+  {name:"Ocean",type:"preset",value:"ocean"},
+];
+
+let chars = [...defaultChars, ...JSON.parse(localStorage.getItem("chars")||"[]")];
+let bgs   = [...defaultBgs,   ...JSON.parse(localStorage.getItem("bgs")||"[]")];
+let char  = chars[0], bg = bgs[0], scenes = [];
+
+const canvas = document.getElementById("canvas");
+const ctx    = canvas.getContext("2d");
+const $      = id => document.getElementById(id);
+
+// ════════════════════════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════════════════════════
+function showPage(id, btn){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
+  $(id).classList.add("active");
+  if(btn) btn.classList.add("active");
+  if(id==="admin"&&!admin){showPage("adminLogin",null);return}
+  if(id==="projects") renderProjects();
+  if(id==="admin")    renderAdmin();
+  if(id==="dashboard") renderProjects();
+}
+function updateAdminUI(){
+  document.querySelectorAll(".adminOnly").forEach(b=>b.style.display=admin?"flex":"none");
+}
+
+// ════════════════════════════════════════════════════
+// EDITOR INIT
+// ════════════════════════════════════════════════════
+function initEditor(){
+  if(!scenes.length) generateScenes();
+  renderChars(); renderBgs(); renderTimeline(); draw();
+}
+function startEditor(){generateScenes();showPage("editor",null);initEditor()}
+function initAdmin(){renderAdmin()}
+
+// ════════════════════════════════════════════════════
+// IMAGE PRELOAD
+// ════════════════════════════════════════════════════
+function preloadImg(src){
+  if(!src||imgs[src]) return imgs[src];
+  const im=new Image(); im.src=src; imgs[src]=im; return im;
+}
+function preload(){
+  chars.forEach(c=>{
+    [c.img,c.idle,c.talk,c.happy,...(c.frames||[])].filter(Boolean).forEach(preloadImg);
+  });
+}
+
+// ════════════════════════════════════════════════════
+// SCENE GENERATION
+// ════════════════════════════════════════════════════
+function generateScenes(){
+  const prompt = $("dashPrompt")?.value||"";
+  const texts = prompt
+    ? [`${prompt} - Scene 1: सुरुवात`, `${prompt} - Scene 2: संघर्ष`, `${prompt} - Scene 3: विजय`, `${prompt} - Scene 4: समाप्ती`]
+    : ["गावात एक शूर नायक राहत होता","तो धैर्याने पुढे चालत गेला","त्याने खलनायकाशी झुंज दिली","शेवटी गाव सुरक्षित झाले! 🎉"];
+  const actions = ["Idle","Walk","Fight","Happy"];
+  scenes = texts.map((text,i)=>({text, char, bg, action:actions[i]||"Idle", pos:"center"}));
+  selectedScene=0; selectScene(0);
+}
+
+// ════════════════════════════════════════════════════
+// SCENE CONTROL
+// ════════════════════════════════════════════════════
+function selectScene(i){
+  selectedScene=Math.max(0,Math.min(i,scenes.length-1));
+  const s=scenes[selectedScene];
+  if(!s) return;
+  $("sceneEdit").value=s.text;
+  $("pos").value=s.pos||"center";
+  // highlight active action
+  document.querySelectorAll(".action-btn").forEach(b=>{
+    b.classList.toggle("active", b.textContent.toLowerCase().includes(s.action.toLowerCase()));
+  });
+  framePhase=0;
+  stopAnimTimer();
+  startActionAnim(s.action);
+  draw(0);
+  renderTimeline();
+}
+function updateScene(){
+  if(!scenes[selectedScene]) return;
+  scenes[selectedScene].text=$("sceneEdit").value;
+  scenes[selectedScene].pos=$("pos").value;
+  draw(framePhase/60); renderTimeline();
+}
+function addScene(){scenes.push({text:"New Scene",char,bg,action:"Idle",pos:"center"});selectScene(scenes.length-1);}
+function addTextScene(){addScene();scenes[selectedScene].text="संवाद येथे टाका...";draw()}
+function addTemplate(){
+  scenes=[
+    {text:"Scene 1: नायकाची ओळख",char,bg,action:"Idle",pos:"center"},
+    {text:"Scene 2: नायक चालतो",char,bg,action:"Walk",pos:"left"},
+    {text:"Scene 3: नायक बोलतो",char,bg,action:"Talk",pos:"center"},
+    {text:"Scene 4: लढाई!",char,bg,action:"Fight",pos:"right"},
+    {text:"Scene 5: विजय!",char,bg,action:"Happy",pos:"center"},
+  ];
+  selectScene(0);
+}
+function duplicateScene(){scenes.splice(selectedScene+1,0,{...scenes[selectedScene]});renderTimeline()}
+function deleteScene(){if(scenes.length<=1)return;scenes.splice(selectedScene,1);selectScene(Math.max(0,selectedScene-1))}
+function nextScene(){selectScene(selectedScene+1)}
+function prevScene(){selectScene(selectedScene-1)}
+
+// ════════════════════════════════════════════════════
+// CHARACTER & BG SELECTION
+// ════════════════════════════════════════════════════
+function selectChar(i){
+  char=chars[i];
+  document.querySelectorAll("#chars .char-card").forEach((e,n)=>e.classList.toggle("active",n===i));
+  scenes.forEach(s=>s.char=char);
+  preload(); draw(framePhase/60);
+}
+function selectBg(i){
+  bg=bgs[i];
+  document.querySelectorAll("#bgs .char-card").forEach((e,n)=>e.classList.toggle("active",n===i));
+  scenes.forEach(s=>s.bg=bg);
+  draw(framePhase/60);
+}
+function renderChars(){
+  $("chars").innerHTML=chars.map((c,i)=>`
+    <div class="char-card ${i===0?'active':''}" onclick="selectChar(${i})">
+      <img src="${c.img||''}" style="height:60px;width:auto;max-width:100%;object-fit:contain" onerror="this.style.display='none'">
+      <b>${c.name}</b>
+    </div>`).join("");
+}
+function renderBgs(){
+  $("bgs").innerHTML=bgs.map((b,i)=>`
+    <div class="char-card ${i===0?'active':''}" onclick="selectBg(${i})">
+      <div style="height:40px;border-radius:6px;background:${bgGrad(b.value)};background-size:cover"></div>
+      <b>${b.name}</b>
+    </div>`).join("");
+}
+function bgGrad(v){
+  const m={village:"linear-gradient(#87ceeb,#f9e29f 55%,#22c55e)",forest:"linear-gradient(#064e3b,#14532d 55%,#052e16)",horror:"linear-gradient(#111827,#374151 55%,#020617)",city:"linear-gradient(#334155,#1e293b 55%,#0f172a)",school:"linear-gradient(#93c5fd,#fef3c7 55%,#c084fc)",desert:"linear-gradient(#f97316,#fbbf24 55%,#c2410c)",ocean:"linear-gradient(#0ea5e9,#06b6d4 55%,#0369a1)"};
+  return m[v]||m.village;
+}
+
+// ════════════════════════════════════════════════════
+// ACTION SYSTEM
+// ════════════════════════════════════════════════════
+function setAction(a){
+  if(!scenes.length) generateScenes();
+  scenes[selectedScene].action=a;
+  document.querySelectorAll(".action-btn").forEach(b=>{
+    b.classList.toggle("active", b.textContent.toLowerCase().includes(a.toLowerCase()));
+  });
+  stopAnimTimer();
+  startActionAnim(a);
+  renderTimeline();
+}
+
+function stopAnimTimer(){clearInterval(animTimer);animTimer=null}
+
+function startActionAnim(action){
+  // continuous looping animation per action
+  stopAnimTimer();
+  framePhase=0;
+  animTimer=setInterval(()=>{
+    framePhase=(framePhase+1)%120;
+    draw(framePhase/120);
+  },33);
+}
+
+// ════════════════════════════════════════════════════
+// DRAW ENGINE
+// ════════════════════════════════════════════════════
+function getCharSource(s, p){
+  const a=s.action, c=s.char;
+  if(!c) return null;
+  if(a==="Walk"&&c.frames?.length) return c.frames[Math.floor(p*c.frames.length*2)%c.frames.length];
+  if(a==="Talk") return c.talk||c.img;
+  if(a==="Happy") return c.happy||c.img;
+  if(a==="Idle") return c.idle||c.img;
+  // All other actions fallback to idle/main with visual effects applied in draw
+  return c.idle||c.img;
+}
+
+function drawBackground(s){
+  const w=canvas.width, h=canvas.height;
+  if(s.bg.type==="image"){
+    const im=preloadImg(s.bg.value);
+    if(im&&im.complete&&im.naturalWidth){ctx.drawImage(im,0,0,w,h);return}
+  }
+  // Preset gradient backgrounds
+  const presets={
+    village:{sky:["#87ceeb","#b0d4f1"],ground:"#22c55e",extras:drawVillageExtras},
+    forest:{sky:["#064e3b","#145e3d"],ground:"#052e16",extras:drawForestExtras},
+    horror:{sky:["#0d1117","#1a1f2e"],ground:"#020617",extras:drawHorrorExtras},
+    city:{sky:["#1e2d45","#334155"],ground:"#0f172a",extras:drawCityExtras},
+    school:{sky:["#bfdbfe","#e0f2fe"],ground:"#c084fc",extras:drawSchoolExtras},
+    desert:{sky:["#fb923c","#f97316"],ground:"#c2410c",extras:null},
+    ocean:{sky:["#0ea5e9","#0369a1"],ground:"#164e63",extras:null},
+  };
+  const preset=presets[s.bg.value]||presets.village;
+  const g=ctx.createLinearGradient(0,0,0,h);
+  g.addColorStop(0,preset.sky[0]);
+  g.addColorStop(.55,preset.sky[1]);
+  g.addColorStop(.7,preset.ground);
+  ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+  if(preset.extras) preset.extras(w,h);
+  // Ground
+  ctx.fillStyle=preset.ground;
+  ctx.fillRect(0,h*.73,w,h*.27);
+}
+
+function drawVillageExtras(w,h){
+  // Sun
+  ctx.beginPath();ctx.arc(w*.85,h*.12,55,0,Math.PI*2);
+  ctx.fillStyle="#fffde7";ctx.fill();
+  // Clouds
+  drawCloud(w*.15,h*.1,80);drawCloud(w*.5,h*.07,60);
+  // Houses
+  drawHouse(w*.1,h*.55,80,100,["#d97706","#92400e"]);
+  drawHouse(w*.82,h*.55,70,90,["#b45309","#78350f"]);
+  // Tree
+  drawTree(w*.4,h*.62,30,80);
+  drawTree(w*.6,h*.58,25,65);
+}
+function drawForestExtras(w,h){
+  ctx.fillStyle="#052e16";
+  for(let i=0;i<8;i++) drawTree(w*(.05+i*.13),h*(.45+Math.random()*.15),20+Math.random()*15,60+Math.random()*40);
+}
+function drawHorrorExtras(w,h){
+  // Moon
+  ctx.beginPath();ctx.arc(w*.8,h*.12,45,0,Math.PI*2);ctx.fillStyle="#cbd5e1";ctx.fill();
+  // Stars
+  for(let i=0;i<30;i++){ctx.beginPath();ctx.arc(Math.random()*w,Math.random()*h*.5,1.5,0,Math.PI*2);ctx.fillStyle="#fff8";ctx.fill()}
+}
+function drawCityExtras(w,h){
+  // Buildings
+  [[w*.05,h*.3,60,h*.45],[w*.15,h*.2,50,h*.55],[w*.72,h*.25,70,h*.5],[w*.83,h*.35,55,h*.4]].forEach(([x,y,bw,bh])=>drawBuilding(x,y,bw,bh));
+}
+function drawSchoolExtras(w,h){
+  drawHouse(w*.3,h*.45,140,150,["#4ade80","#166534"]);
+  drawCloud(w*.2,h*.1,100);
+}
+function drawCloud(x,y,r){
+  ctx.fillStyle="#ffffffcc";
+  ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(x+r*.6,y-r*.3,r*.7,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(x-r*.6,y-r*.2,r*.6,0,Math.PI*2);ctx.fill();
+}
+function drawHouse(x,y,w,h,colors){
+  ctx.fillStyle=colors[0];ctx.fillRect(x,y,w,h);
+  ctx.beginPath();ctx.moveTo(x-10,y);ctx.lineTo(x+w/2,y-h*.4);ctx.lineTo(x+w+10,y);ctx.closePath();
+  ctx.fillStyle=colors[1];ctx.fill();
+  ctx.fillStyle="#92400e88";ctx.fillRect(x+w*.35,y+h*.55,w*.3,h*.45);
+}
+function drawTree(x,y,r,h){
+  ctx.fillStyle="#374151";ctx.fillRect(x-4,y,8,h);
+  ctx.fillStyle="#15803d";
+  ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(x,y-r*.6,r*.7,0,Math.PI*2);ctx.fill();
+}
+function drawBuilding(x,y,w,h){
+  ctx.fillStyle="#1e293b";ctx.fillRect(x,y,w,h);
+  ctx.fillStyle="#fbbf2466";
+  for(let r=0;r<6;r++) for(let c=0;c<3;c++){
+    if(Math.random()>.4) ctx.fillRect(x+8+c*18,y+8+r*22,10,12);
+  }
+}
+
+// ── CHARACTER DRAW WITH ACTION ANIMATIONS ──
+function draw(p=0){
+  if(!scenes.length)return;
+  const s=scenes[selectedScene];
+  const w=canvas.width,h=canvas.height;
+  ctx.clearRect(0,0,w,h);
+  drawBackground(s);
+
+  const a=s.action||"Idle";
+  const src=getCharSource(s,p);
+  const im=src?preloadImg(src):null;
+  const cw=w*.2*zoom, ch=cw*1.6;
+  let baseX=w/2-cw/2, baseY=h*.72-ch;
+  if(s.pos==="left") baseX=w*.18-cw/2;
+  if(s.pos==="right") baseX=w*.82-cw/2;
+
+  // ── ACTION-SPECIFIC TRANSFORM ──
+  ctx.save();
+  let dx=0,dy=0,rot=0,scX=1,scY=1;
+  const t=p*Math.PI*2;
+
+  switch(a){
+    case "Walk":
+      dx=Math.sin(t)*w*.06;
+      dy=Math.abs(Math.sin(t*2))*-4;
+      break;
+    case "Talk":
+      dy=Math.sin(t*5)*5;
+      break;
+    case "Jump":
+      dy=Math.sin(t)*-90;
+      scX=1+Math.sin(t)*.06;
+      scY=1-Math.sin(t)*.06;
+      break;
+    case "Fight":
+      dx=Math.sin(t*4)*18;
+      rot=Math.sin(t*4)*.12;
+      break;
+    case "Dance":
+      dx=Math.sin(t)*25;
+      rot=Math.sin(t)*.18;
+      scY=1+Math.abs(Math.sin(t))*.08;
+      break;
+    case "Hold":
+      scX=1+Math.sin(t)*.03;
+      dy=Math.sin(t*2)*-3;
+      break;
+    case "Happy":
+      dy=Math.sin(t)*-20;
+      scX=1+Math.abs(Math.sin(t))*.07;
+      break;
+    case "Scared":
+      dx=Math.sin(t*7)*10;
+      dy=Math.sin(t*7)*5;
+      break;
+    case "Angry":
+      dx=Math.sin(t*6)*8;
+      rot=Math.sin(t*6)*.06;
+      break;
+    default: // Idle
+      dy=Math.sin(t*.5)*-4;
+  }
+
+  const cx=baseX+dx+cw/2, cy=baseY+dy+ch/2;
+  ctx.translate(cx,cy);
+  ctx.rotate(rot);
+  ctx.scale(scX,scY);
+  ctx.translate(-cw/2,-ch/2);
+
+  if(im&&im.complete&&im.naturalWidth){
+    ctx.drawImage(im,0,0,cw,ch);
+  } else {
+    // Fallback: draw colourful placeholder silhouette
+    drawPlaceholderChar(cw,ch,a);
+  }
+  ctx.restore();
+
+  // ── ACTION EFFECTS ──
+  drawActionEffect(a, baseX+dx+cw/2, baseY+dy+ch/2, cw, p);
+
+  // ── SUBTITLE BAR ──
+  ctx.fillStyle="rgba(0,0,0,.72)";
+  ctx.fillRect(w*.04,h-110,w*.92,75);
+  ctx.fillStyle="#fff";
+  ctx.textAlign="center";
+  ctx.font="bold 32px 'Noto Sans Devanagari',Arial";
+  ctx.shadowColor="#00d4ff";ctx.shadowBlur=10;
+  ctx.fillText(s.text,w/2,h-62);
+  ctx.shadowBlur=0;
+
+  // Scene indicator
+  ctx.fillStyle="#ffffff44";ctx.textAlign="left";ctx.font="bold 18px Orbitron,Arial";
+  ctx.fillText(`${selectedScene+1}/${scenes.length} • ${a.toUpperCase()}`,w*.05,30);
+}
+
+function drawPlaceholderChar(cw,ch,action){
+  // Stylised vector silhouette
+  const colors={Walk:"#00d4ff",Talk:"#7c3aed",Jump:"#f59e0b",Fight:"#ff4466",Dance:"#00ff88",Hold:"#60a5fa",Happy:"#fbbf24",Scared:"#a78bfa",Angry:"#f87171",Idle:"#6ee7b7"};
+  const c=colors[action]||"#94a3b8";
+  // Body
+  ctx.fillStyle=c+"88";ctx.beginPath();ctx.roundRect(cw*.3,ch*.35,cw*.4,ch*.4,8);ctx.fill();
+  // Head
+  ctx.beginPath();ctx.arc(cw*.5,ch*.25,cw*.18,0,Math.PI*2);ctx.fillStyle=c;ctx.fill();
+  // Legs
+  ctx.strokeStyle=c;ctx.lineWidth=cw*.07;ctx.lineCap="round";
+  ctx.beginPath();ctx.moveTo(cw*.42,ch*.75);ctx.lineTo(cw*.35,ch*.95);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cw*.58,ch*.75);ctx.lineTo(cw*.65,ch*.95);ctx.stroke();
+  // Arms
+  ctx.beginPath();ctx.moveTo(cw*.3,ch*.45);ctx.lineTo(cw*.1,ch*.6);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cw*.7,ch*.45);ctx.lineTo(cw*.9,ch*.6);ctx.stroke();
+  // Label
+  ctx.fillStyle="#ffffffaa";ctx.textAlign="center";ctx.font=`bold ${cw*.12}px Rajdhani,sans-serif`;
+  ctx.fillText(action,cw*.5,ch*.5);
+}
+
+function drawActionEffect(action, cx, cy, cw, p){
+  const w=canvas.width,h=canvas.height;
+  ctx.save();
+  switch(action){
+    case "Fight":
+      // Impact stars
+      if(Math.sin(p*Math.PI*2*4)>0.5){
+        for(let i=0;i<5;i++){
+          const a=i/5*Math.PI*2,r=cw*.5+Math.sin(p*12)*cw*.1;
+          ctx.beginPath();ctx.arc(cx+Math.cos(a)*r,cy+Math.sin(a)*r,6,0,Math.PI*2);
+          ctx.fillStyle="#f59e0b";ctx.fill();
+        }
+        ctx.fillStyle="#ff446688";ctx.font="bold 40px Arial";ctx.textAlign="center";
+        ctx.fillText("💥",cx+cw*.6,cy-cw*.3);
+      }
+      break;
+    case "Jump":
+      // Shadow
+      ctx.fillStyle="#0004";ctx.beginPath();
+      ctx.ellipse(cx,h*.72,cw*.4+Math.sin(p*Math.PI*2)*cw*.05,12,0,0,Math.PI*2);ctx.fill();
+      break;
+    case "Happy":
+      // Hearts
+      ctx.font="28px Arial";ctx.textAlign="center";
+      ctx.globalAlpha=0.5+Math.sin(p*Math.PI*2)*.5;
+      ctx.fillText("❤",cx-cw*.6,cy-cw*.3-Math.sin(p*Math.PI*2)*30);
+      ctx.fillText("💛",cx+cw*.6,cy-cw*.2-Math.cos(p*Math.PI*2)*25);
+      break;
+    case "Dance":
+      // Music notes
+      ctx.font="24px Arial";ctx.textAlign="center";
+      ctx.globalAlpha=0.7;
+      ctx.fillText("🎵",cx-cw*.7,cy-Math.abs(Math.sin(p*Math.PI*4))*40);
+      ctx.fillText("🎶",cx+cw*.7,cy-Math.abs(Math.cos(p*Math.PI*4))*35);
+      break;
+    case "Talk":
+      // Speech bubble
+      const bx=cx+cw*.3,by=cy-cw*.4;
+      ctx.fillStyle="#ffffffdd";ctx.beginPath();
+      ctx.roundRect(bx,by-28,130,36,10);ctx.fill();
+      ctx.fillStyle="#1e293b";ctx.font="bold 14px Rajdhani,Arial";
+      ctx.textAlign="left";ctx.fillText("बोलत आहे...",bx+10,by-4);
+      break;
+    case "Scared":
+      // Sweat drops
+      ctx.font="22px Arial";ctx.textAlign="center";
+      ctx.fillText("😰",cx,cy-cw*.7);
+      break;
+  }
+  ctx.restore();
+}
+
+// ════════════════════════════════════════════════════
+// PLAYBACK
+// ════════════════════════════════════════════════════
+function playPreview(){
+  if(!scenes.length) generateScenes();
+  stopPreview();
+  let f=0, si=0;
+  if(audioUrl){$("audio").currentTime=0;$("audio").play().catch(()=>{})}
+  playTimer=setInterval(()=>{
+    selectedScene=si;
+    draw((f%90)/90);
+    f++;
+    if(f%90===0){si=(si+1)%scenes.length;renderTimeline()}
+  },33);
+}
+function stopPreview(){
+  clearInterval(playTimer);playTimer=null;
+  if(audioUrl) $("audio").pause();
+  // Resume action animation
+  if(scenes[selectedScene]) startActionAnim(scenes[selectedScene].action);
+}
+function zoomIn(){zoom=Math.min(2,zoom+.1);draw(0)}
+function zoomOut(){zoom=Math.max(.4,zoom-.1);draw(0)}
+
+// ════════════════════════════════════════════════════
+// TIMELINE
+// ════════════════════════════════════════════════════
+function renderTimeline(){
+  const clips=scenes.map((s,i)=>`<div class="clip ${i===selectedScene?'active':''}" onclick="selectScene(${i})">Sc ${i+1}<br>${s.action}</div>`).join("");
+  ["sceneTrack","actionTrack"].forEach(id=>$(id).innerHTML=clips);
+}
+
+// ════════════════════════════════════════════════════
+// PANEL TAB
+// ════════════════════════════════════════════════════
+function panelTab(name){
+  // Just keep the right panel visible (it's always shown)
+}
+
+// ════════════════════════════════════════════════════
+// AUDIO
+// ════════════════════════════════════════════════════
+function uploadAudio(e){
+  const f=e.target.files[0]; if(!f) return;
+  audioUrl=URL.createObjectURL(f);
+  const el=$("audio");el.src=audioUrl;el.style.display="inline-block";
+  $("audioTrack").innerHTML="🎵 "+f.name;
+}
+
+// ════════════════════════════════════════════════════
+// PROJECTS
+// ════════════════════════════════════════════════════
+function saveProject(){
+  const p=JSON.parse(localStorage.getItem("projects")||"[]");
+  p.unshift({title:"Project "+(p.length+1)+": "+($("dashPrompt")?.value||"Untitled"),scenes,date:new Date().toLocaleDateString()});
+  localStorage.setItem("projects",JSON.stringify(p));
+  renderProjects();
+  // Toast
+  showToast("💾 Project Saved!");
+}
+function renderProjects(){
+  const p=JSON.parse(localStorage.getItem("projects")||"[]");
+  const placeholders=[{title:"Village Hero Story"},{title:"Villain Chase"},{title:"Love Story"},{title:"Horror Night"}];
+  $("recent").innerHTML=(p.length?p:placeholders).slice(0,4).map(x=>`
+    <div class="proj-card"><b>${x.title}${x.date?' — '+x.date:''}</b></div>`).join("");
+  if($("projectsList")) $("projectsList").innerHTML=p.map(x=>`
+    <div class="asset-item">📁 ${x.title} • ${(x.scenes||[]).length} scenes • ${x.date||""}</div>`).join("")||"<p style='color:var(--muted)'>No saved projects yet.</p>";
+}
+function clearProjects(){if(!confirm("Clear all projects?"))return;localStorage.removeItem("projects");renderProjects()}
+
+// ════════════════════════════════════════════════════
+// ADMIN
+// ════════════════════════════════════════════════════
+function adminLogin(){
+  if($("pin").value===PIN){admin=true;localStorage.setItem("admin","1");updateAdminUI();showPage("admin",null);initAdmin()}
+  else{showToast("❌ Wrong PIN",true)}
+}
+function adminLogout(){admin=false;localStorage.removeItem("admin");updateAdminUI();showPage("dashboard",null)}
+function pickChar(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{tempChar=r.result;$("charPreview").innerHTML=`<img src="${tempChar}">`};r.readAsDataURL(f)}
+function pickBg(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{tempBg=r.result;$("bgPreview").innerHTML=`<img src="${tempBg}">`};r.readAsDataURL(f)}
+function addChar(){
+  if(!admin)return;
+  const list=JSON.parse(localStorage.getItem("chars")||"[]");
+  list.push({name:$("charName").value||"New Character",img:tempChar,idle:tempChar,talk:tempChar,happy:tempChar});
+  localStorage.setItem("chars",JSON.stringify(list));
+  showToast("✅ Character Added!");location.reload();
+}
+function addBg(){
+  if(!admin)return;
+  const list=JSON.parse(localStorage.getItem("bgs")||"[]");
+  list.push({name:$("bgName").value||"New Background",type:"image",value:tempBg});
+  localStorage.setItem("bgs",JSON.stringify(list));
+  showToast("✅ Background Added!");location.reload();
+}
+function renderAdmin(){
+  $("adminChars").innerHTML=JSON.parse(localStorage.getItem("chars")||"[]").map(x=>`<div class="asset-item">🏃 ${x.name}</div>`).join("")||"<p style='color:var(--muted)'>No custom characters</p>";
+  $("adminBgs").innerHTML=JSON.parse(localStorage.getItem("bgs")||"[]").map(x=>`<div class="asset-item">🏞 ${x.name}</div>`).join("")||"<p style='color:var(--muted)'>No custom backgrounds</p>";
+}
+function clearAssets(){if(!confirm("Clear all custom assets?"))return;localStorage.removeItem("chars");localStorage.removeItem("bgs");location.reload()}
+
+// ════════════════════════════════════════════════════
+// EXPORT
+// ════════════════════════════════════════════════════
+async function exportVideo(){
+  if(!scenes.length) generateScenes();
+  $("loading").classList.add("show");
+  try{
+    const stream=canvas.captureStream(30);
+    const rec=new MediaRecorder(stream,{mimeType:"video/webm"});
+    const chunks=[];
+    rec.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};
+    rec.onstop=()=>{
+      const blob=new Blob(chunks,{type:"video/webm"});
+      const a=document.createElement("a");
+      a.href=URL.createObjectURL(blob);
+      a.download="ai-animate-v26.webm";
+      a.click();
+      $("loading").classList.remove("show");
+    };
+    rec.start();
+    let si=0,f=0,total=90*scenes.length;
+    const r=setInterval(()=>{
+      selectedScene=si;draw((f%90)/90);f++;
+      if(f%90===0)si++;
+      if(f>=total){clearInterval(r);setTimeout(()=>rec.stop(),300)}
+    },33);
+  }catch(err){$("loading").classList.remove("show");showToast("❌ Export failed: "+err.message,true)}
+}
+
+// ════════════════════════════════════════════════════
+// MISC
+// ════════════════════════════════════════════════════
+function generateStory(){showToast("📖 Story Writer: dashboard prompt वापरून Animation Studio उघडा!")}
+function seoHelp(){showToast("🧲 SEO Writer: V27 मध्ये येणार आहे!")}
+
+function showToast(msg, err=false){
+  const t=document.createElement("div");
+  t.textContent=msg;
+  Object.assign(t.style,{position:"fixed",bottom:"24px",left:"50%",transform:"translateX(-50%)",
+    background:err?"#7f1d1d":"#0e1a2e",border:"1px solid "+(err?"#ff4466":"#00d4ff"),
+    color:"#fff",padding:"12px 24px",borderRadius:"999px",fontWeight:"700",
+    zIndex:"9999",boxShadow:"0 0 20px "+(err?"#ff446688":"#00d4ff44"),
+    fontSize:"15px",fontFamily:"Rajdhani,sans-serif"});
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),2800);
+}
+
+// ════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════
+updateAdminUI();
+preload();
+renderProjects();
+generateScenes();
+// Start idle anim on canvas so it's not blank
+setTimeout(()=>{draw(0);startActionAnim("Idle")},200);
+</script>
+</body>
+</html>
