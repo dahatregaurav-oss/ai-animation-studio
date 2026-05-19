@@ -1,20 +1,19 @@
-AI Animate Studio V20 Working Video MVP
+Hero Character Pack V1 for AI Animate Studio
 
-What works:
-- Script to scenes
-- Character selection
-- Preset backgrounds
-- Upload new background image
-- Canvas animation preview
-- Scene editor
-- Local project save/load
-- Export browser video as .webm
+Files:
+- idle.png
+- talk.png
+- happy.png
+- walk1.png to walk5.png
+- manifest.json
+- preview.png
 
-Important:
-- Export is WebM, not MP4. For Instagram/YouTube, convert WebM to MP4 using any free online converter or CapCut.
-- Real server MP4 export needs backend/FFmpeg later.
+How to use:
+1. Upload the full assets folder into your GitHub project.
+2. In website code, use:
+   assets/characters/village-hero/idle.png
+   assets/characters/village-hero/walk1.png etc.
+3. Walking animation can cycle walk1 → walk2 → walk3 → walk4 → walk5.
 
-Deploy:
-1. Extract ZIP
-2. Upload extracted files to GitHub repo
-3. Vercel auto deploys
+Note:
+These are website-ready transparent PNG assets created from your provided character images.
