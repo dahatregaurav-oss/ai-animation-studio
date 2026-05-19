@@ -1,3 +1,14 @@
-AI Animate Studio V23 One Click Actions
-PIN: 1234
-Features: one-click Idle/Talk/Walk/Happy/Angry/Scared, audio upload, admin panel, user demo, WebM export.
+AI Animate Studio V24 Dashboard + Editor
+
+Added:
+- AutoDraft style dashboard
+- Separate full editor page
+- Left editor tool sidebar
+- Right asset/settings panel
+- Bottom multi-layer timeline
+- One-click actions
+- Admin panel
+- Audio upload
+- WebM export
+
+Admin PIN: 1234
