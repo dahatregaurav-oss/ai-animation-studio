@@ -1,0 +1,77 @@
+const v27TransparentCharacters = [
+  {
+    "name": "Village Man Stick 2D",
+    "img": "assets/characters/v27-pack-transparent/village-man-stick-2d.png",
+    "category": "V27 Transparent Character Pack"
+  },
+  {
+    "name": "Village Man Stick 3D",
+    "img": "assets/characters/v27-pack-transparent/village-man-stick-3d.png",
+    "category": "V27 Transparent Character Pack"
+  },
+  {
+    "name": "Village Man Stick Alt 3D",
+    "img": "assets/characters/v27-pack-transparent/village-man-stick-alt-3d.png",
+    "category": "V27 Transparent Character Pack"
+  },
+  {
+    "name": "Old Man Stick 2D",
+    "img": "assets/characters/v27-pack-transparent/old-man-stick-2d.png",
+    "category": "V27 Transparent Character Pack"
+  },
+  {
+    "name": "Old Man Stick Alt 2D",
+    "img": "assets/characters/v27-pack-transparent/old-man-stick-alt-2d.png",
+    "category": "V27 Transparent Character Pack"
+  },
+  {
+    "name": "Blue Turban Man 2D",
+    "img": "assets/characters/v27-pack-transparent/blue-turban-man-2d.png",
+    "category": "V27 Transparent Character Pack"
+  },
+  {
+    "name": "Blue Turban Man Alt 2D",
+    "img": "assets/characters/v27-pack-transparent/blue-turban-man-alt-2d.png",
+    "category": "V27 Transparent Character Pack"
+  },
+  {
+    "name": "White Shirt Headwrap Man 2D",
+    "img": "assets/characters/v27-pack-transparent/white-shirt-headwrap-man-2d.png",
+    "category": "V27 Transparent Character Pack"
+  },
+  {
+    "name": "Simple Village Man 2D",
+    "img": "assets/characters/v27-pack-transparent/simple-village-man-2d.png",
+    "category": "V27 Transparent Character Pack"
+  },
+  {
+    "name": "Green Headwrap Man 2D",
+    "img": "assets/characters/v27-pack-transparent/green-headwrap-man-2d.png",
+    "category": "V27 Transparent Character Pack"
+  },
+  {
+    "name": "Green Headwrap Man Alt 2D",
+    "img": "assets/characters/v27-pack-transparent/green-headwrap-man-alt-2d.png",
+    "category": "V27 Transparent Character Pack"
+  },
+  {
+    "name": "School Boy 2D",
+    "img": "assets/characters/v27-pack-transparent/school-boy-2d.png",
+    "category": "V27 Transparent Character Pack"
+  },
+  {
+    "name": "Mustache Village Man 2D",
+    "img": "assets/characters/v27-pack-transparent/mustache-village-man-2d.png",
+    "category": "V27 Transparent Character Pack"
+  },
+  {
+    "name": "Vest Village Man 2D",
+    "img": "assets/characters/v27-pack-transparent/vest-village-man-2d.png",
+    "category": "V27 Transparent Character Pack"
+  },
+  {
+    "name": "Vest Village Man Alt 2D",
+    "img": "assets/characters/v27-pack-transparent/vest-village-man-alt-2d.png",
+    "category": "V27 Transparent Character Pack"
+  }
+];
