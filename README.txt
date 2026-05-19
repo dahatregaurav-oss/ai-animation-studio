@@ -1,19 +1,15 @@
-Hero Character Pack V1 for AI Animate Studio
+AI Animate Studio V21 Smooth Working Pack
 
-Files:
-- idle.png
-- talk.png
-- happy.png
-- walk1.png to walk5.png
-- manifest.json
-- preview.png
+Upload this extracted package to GitHub as a full replacement.
 
-How to use:
-1. Upload the full assets folder into your GitHub project.
-2. In website code, use:
-   assets/characters/village-hero/idle.png
-   assets/characters/village-hero/walk1.png etc.
-3. Walking animation can cycle walk1 → walk2 → walk3 → walk4 → walk5.
+Important:
+- Keep the assets folder exactly as included.
+- The hero character is loaded from assets/characters/village-hero/idle.png
+- Walking frames are already connected.
 
-Note:
-These are website-ready transparent PNG assets created from your provided character images.
+Deploy:
+1. Extract ZIP
+2. Upload/replace files in GitHub
+3. Commit changes
+4. Wait for Vercel redeploy
+5. Hard refresh website
