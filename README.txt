@@ -1,4 +1,3 @@
-AI Animate Studio V22 Admin Panel
+AI Animate Studio V23 One Click Actions
 PIN: 1234
-Extract ZIP, upload to GitHub, Vercel auto deploy.
-Admin uploaded assets are stored in browser localStorage demo.
+Features: one-click Idle/Talk/Walk/Happy/Angry/Scared, audio upload, admin panel, user demo, WebM export.
