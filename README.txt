@@ -1,3 +1,1 @@
-AI Animate Studio V25 Action Engine
-Walk/Talk/Idle/Happy/Angry/Scared one-click working animations.
-Upload ZIP extracted files to GitHub.
+AI Animate Studio V26 All Working\nDashboard, Editor, Admin PIN 1234, character/background upload, actions, audio, timeline, save, export.\n

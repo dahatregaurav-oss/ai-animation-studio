@@ -1,59 +1,9 @@
-<!DOCTYPE html>
-<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AI Animate Studio V25</title><link rel="stylesheet" href="style.css"></head><body>
-<div class="app">
-<aside class="sidebar">
-<div class="brand">⚡ <b>AI Animate</b><span>Studio V25</span></div>
-<button onclick="showPage('dashboard')">🏠 Dashboard</button>
-<button onclick="showPage('editor')">🎬 Animation Studio</button>
-<button onclick="showPage('adminLogin')">🔐 Admin Login</button>
-<button class="adminOnly" onclick="showPage('admin')">🛠 Admin Panel</button>
-<div class="profile"><b>Gaurav Dahatre</b><small>Free Plan • 25 credits</small><button>Upgrade</button></div>
-</aside>
-
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AI Animate Studio V26</title><link rel="stylesheet" href="style.css"></head><body>
+<div class="app"><aside class="sidebar"><div class="brand">⚡ <b>AI Animate</b><span>Studio V26</span></div><button onclick="showPage('dashboard')">🏠 Dashboard</button><button onclick="showPage('editor')">🎬 Animation Studio</button><button onclick="showPage('projects')">📁 Projects</button><button onclick="showPage('adminLogin')">🔐 Admin Login</button><button class="adminOnly" onclick="showPage('admin')">🛠 Admin Panel</button><button class="adminOnly" onclick="adminLogout()">🚪 Logout</button><div class="profile"><b>Gaurav Dahatre</b><small>Free Plan • 25 credits</small><button>Upgrade</button></div></aside>
 <main>
-<section id="dashboard" class="page active">
-<div class="hero">
-<h1>Monetize & Grow Faster on YouTube</h1>
-<p>Create animated story videos with character actions, audio and export.</p>
-<div class="prompt"><input id="dashPrompt" value="Create village story animation"><button onclick="startEditor()">➤</button></div>
-<div class="tools">
-<div onclick="showPage('editor')">🏃<b>Animation Studio</b></div><div>🖼<b>AI Image</b></div><div>🎙<b>AI Voice</b></div><div>📹<b>AI Video</b></div><div>📄<b>Story Writer</b></div>
-</div>
-</div>
-<h2>Recent Projects</h2><div id="recent" class="projects"></div>
-</section>
-
-<section id="editor" class="page">
-<div class="editor">
-<div class="leftTools">
-<button>🏃<span>Character</span></button><button>📁<span>Media</span></button><button>🎞<span>Templates</span></button><button>🎙<span>AI Voice</span></button><button>🔤<span>Text</span></button>
-</div>
-<div class="center">
-<div class="top"><button onclick="showPage('dashboard')">← Dashboard</button><b>New Project</b><button onclick="saveProject()">💾 Save</button><button class="primary" onclick="exportVideo()">⬇ Download</button></div>
-<canvas id="canvas" width="1280" height="720"></canvas>
-<div class="playbar"><button onclick="playPreview()">▶ Play</button><button onclick="stopPreview()">⏸ Stop</button><button onclick="zoomOut()">−</button><button onclick="zoomIn()">+</button></div>
-<div class="actionPanel">
-<button onclick="setAction('Idle')">🙂 Idle</button><button onclick="setAction('Talking')">🗣 Talking</button><button onclick="setAction('Walking')">🚶 Walking</button><button onclick="setAction('Happy')">😊 Happy</button><button onclick="setAction('Angry')">😠 Angry</button><button onclick="setAction('Scared')">😨 Scared</button>
-<label>🎵 Audio<input type="file" accept="audio/*" onchange="uploadAudio(event)"></label><audio id="audio" controls style="display:none"></audio>
-</div>
-<div class="timeline">
-<div class="row"><b>Scenes</b><div id="sceneTrack"></div></div>
-<div class="row"><b>Character</b><div id="charTrack"></div></div>
-<div class="row"><b>Action</b><div id="actionTrack"></div></div>
-<div class="row"><b>Audio</b><div id="audioTrack" class="audioTrack">No audio</div></div>
-</div>
-</div>
-<div class="right">
-<h3>Scene Editor</h3><textarea id="sceneEdit"></textarea>
-<select id="pos" onchange="updateScene()"><option value="center">Center</option><option value="left">Left</option><option value="right">Right</option></select>
-<button class="primary full" onclick="updateScene()">Update Scene</button>
-<h3>Characters</h3><div id="chars" class="cards"></div>
-<h3>Backgrounds</h3><div id="bgs" class="cards"></div>
-</div>
-</div>
-</section>
-
+<section id="dashboard" class="page active"><div class="hero"><h1>Monetize & Grow Faster on YouTube</h1><p>Create animated story videos with characters, backgrounds, audio and export.</p><div class="prompt"><input id="dashPrompt" value="Create village story animation"><button onclick="startEditor()">➤</button></div><div class="tools"><div onclick="startEditor()">🏃<b>Animation Studio</b></div><div onclick="showPage('admin')">🖼<b>Add Assets</b></div><div onclick="showPage('editor')">🎙<b>Audio Upload</b></div><div onclick="startEditor()">📹<b>AI Video</b></div><div onclick="generateStory()">📄<b>Story Writer</b></div><div onclick="seoHelp()">🧲<b>SEO Writer</b></div></div></div><div class="head"><h2>Recent Projects</h2><button onclick="showPage('projects')">View All</button></div><div id="recent" class="projects"></div></section>
+<section id="editor" class="page"><div class="editor"><div class="leftTools"><button onclick="panelTab('characters')">🏃<span>Character</span></button><button onclick="panelTab('backgrounds')">🏞<span>Media</span></button><button onclick="addTemplate()">🎞<span>Templates</span></button><button onclick="panelTab('audio')">🎙<span>AI Voice</span></button><button onclick="addTextScene()">🔤<span>Text</span></button></div><div class="center"><div class="top"><button onclick="showPage('dashboard')">← Dashboard</button><b>New Project</b><button onclick="addScene()">+ Scene</button><button onclick="saveProject()">💾 Save</button><button class="primary" onclick="exportVideo()">⬇ Download</button></div><canvas id="canvas" width="1280" height="720"></canvas><div class="playbar"><button onclick="prevScene()">⏮</button><button onclick="playPreview()">▶ Play</button><button onclick="stopPreview()">⏸ Stop</button><button onclick="nextScene()">⏭</button><button onclick="zoomOut()">−</button><button onclick="zoomIn()">+</button></div><div class="actionPanel"><button onclick="setAction('Idle')">🙂 Idle</button><button onclick="setAction('Talking')">🗣 Talking</button><button onclick="setAction('Walking')">🚶 Walking</button><button onclick="setAction('Happy')">😊 Happy</button><button onclick="setAction('Angry')">😠 Angry</button><button onclick="setAction('Scared')">😨 Scared</button><label>🎵 Audio<input type="file" accept="audio/*" onchange="uploadAudio(event)"></label><audio id="audio" controls></audio></div><div class="timeline"><div class="row"><b>Scenes</b><div id="sceneTrack"></div></div><div class="row"><b>Character</b><div id="charTrack"></div></div><div class="row"><b>Action</b><div id="actionTrack"></div></div><div class="row"><b>Audio</b><div id="audioTrack" class="audioTrack">No audio</div></div></div></div><div class="right"><h3 id="panelTitle">Scene Editor</h3><textarea id="sceneEdit"></textarea><select id="pos" onchange="updateScene()"><option value="center">Center</option><option value="left">Left</option><option value="right">Right</option></select><button class="primary full" onclick="updateScene()">Update Scene</button><button class="full" onclick="duplicateScene()">Duplicate Scene</button><button class="danger full" onclick="deleteScene()">Delete Scene</button><h3>Characters</h3><div id="chars" class="cards"></div><h3>Backgrounds</h3><div id="bgs" class="cards"></div></div></div></section>
+<section id="projects" class="page"><div class="panel"><h2>Saved Projects</h2><div id="projectsList"></div><button onclick="clearProjects()" class="danger">Clear Projects</button></div></section>
 <section id="adminLogin" class="page"><div class="panel login"><h2>Admin Login</h2><input id="pin" type="password" placeholder="PIN 1234"><button class="primary full" onclick="adminLogin()">Login</button></div></section>
-<section id="admin" class="page"><div class="panel"><h2>Admin Panel</h2><input id="charName" placeholder="Character name"><label class="upload">Upload Character PNG<input type="file" accept="image/*" onchange="pickChar(event)"></label><button onclick="addChar()">Add Character</button><input id="bgName" placeholder="Background name"><label class="upload">Upload Background<input type="file" accept="image/*" onchange="pickBg(event)"></label><button onclick="addBg()">Add Background</button></div></section>
+<section id="admin" class="page"><div class="adminGrid"><div class="panel"><h2>Add Character</h2><input id="charName" placeholder="Character name"><label class="upload">Upload Character PNG<input type="file" accept="image/*" onchange="pickChar(event)"></label><div id="charPreview" class="preview"></div><button class="primary full" onclick="addChar()">Add Character</button></div><div class="panel"><h2>Add Background</h2><input id="bgName" placeholder="Background name"><label class="upload">Upload Background<input type="file" accept="image/*" onchange="pickBg(event)"></label><div id="bgPreview" class="preview"></div><button class="primary full" onclick="addBg()">Add Background</button></div><div class="panel"><h2>Admin Assets</h2><button class="danger full" onclick="clearAssets()">Clear Added Assets</button><h3>Characters</h3><div id="adminChars"></div><h3>Backgrounds</h3><div id="adminBgs"></div></div></div></section>
 </main></div><div id="loading" class="loading">Rendering video...</div><script src="script.js"></script></body></html>
