@@ -1,8 +1,37 @@
-const chars=[
-{name:"Village Boy",img:"idle.png"},
-{name:"Village Woman",img:"assets/characters/village-woman.png"},
-{name:"Grandmother",img:"assets/characters/grandmother.png"},
-{name:"Villain Man",img:"assets/characters/villain-man.png"}
+const chars = [
+
+{name:"Village Boy", img:"idle.png"},
+
+{name:"Blue Turban Man", img:"blue-turban-man-2d.png"},
+
+{name:"Blue Turban Alt", img:"blue-turban-man-alt-2d.png"},
+
+{name:"Green Headwrap Man", img:"green-headwrap-man-2d.png"},
+
+{name:"Green Headwrap Alt", img:"green-headwrap-man-alt-2d.png"},
+
+{name:"Mustache Village Man", img:"mustache-village-man-2d.png"},
+
+{name:"Old Man Stick", img:"old-man-stick-2d.png"},
+
+{name:"Old Man Stick Alt", img:"old-man-stick-alt-2d.png"},
+
+{name:"School Boy", img:"school-boy-2d.png"},
+
+{name:"Simple Village Man", img:"simple-village-man-2d.png"},
+
+{name:"Vest Village Man", img:"vest-village-man-2d.png"},
+
+{name:"Vest Village Alt", img:"vest-village-man-alt-2d.png"},
+
+{name:"Village Man Stick 2D", img:"village-man-stick-2d.png"},
+
+{name:"Village Man Stick 3D", img:"village-man-stick-3d.png"},
+
+{name:"Village Man Stick Alt 3D", img:"village-man-stick-alt-3d.png"},
+
+{name:"White Shirt Headwrap", img:"white-shirt-headwrap-man-2d.png"}
+
 ];
 
 let scenes=[];
