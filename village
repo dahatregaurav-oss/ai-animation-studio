@@ -1,5 +1,5 @@
 const chars=[
- {name:"Village Boy",img:"assets/characters/village-boy.png"},
+{name:"Village Boy",img:"assets/characters/village-hero/idle.png"},
  {name:"Village Woman",img:"assets/characters/village-woman.png"},
  {name:"Grandmother",img:"assets/characters/grandmother.png"},
  {name:"Villain Man",img:"assets/characters/villain-man.png"}
