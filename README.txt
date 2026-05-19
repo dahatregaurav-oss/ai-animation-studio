@@ -1,1 +1,2 @@
-AI Animate Studio V27 Fixed - No Admin Panel\nUpload all files to GitHub root.\n
+AI Animate Studio V28 Character Engine
+Upload all files to GitHub root.

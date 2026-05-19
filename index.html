@@ -1,35 +1,19 @@
 <!DOCTYPE html>
-<html lang="mr">
-<head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Animate Studio V27 Fixed</title><link rel="stylesheet" href="style.css">
-</head>
-<body>
-<div class="app">
-<aside class="sidebar">
-<div class="brand">⚡ <b>AI ANIMATE</b><span>STUDIO V27</span></div>
-<button onclick="showPage('dashboard')">🏠 Dashboard</button>
-<button onclick="showPage('editor')">🎬 Animation Studio</button>
-<button onclick="showPage('projects')">📁 Projects</button>
-<div class="profile"><b>Gaurav Dahatre</b><small>Creator Plan • 25 Credits</small></div>
-</aside>
+<html lang="mr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Animate Studio V28</title><link rel="stylesheet" href="style.css"></head>
+<body><div class="app">
+<aside class="sidebar"><div class="brand">⚡ <b>AI ANIMATE</b><span>STUDIO V28</span></div>
+<button onclick="showPage('dashboard')">🏠 Dashboard</button><button onclick="showPage('editor')">🎬 Animation Studio</button><button onclick="showPage('projects')">📁 Projects</button>
+<div class="profile"><b>Gaurav Dahatre</b><small>Launch Build • Character Engine</small></div></aside>
 <main>
-<section id="dashboard" class="page active">
-<div class="hero"><h1>AI Animation Studio</h1><p>Story → Character → Animation → Audio → Export</p>
-<div class="prompt"><input id="dashPrompt" value="गावात एक मुलगा राहत होता"><button onclick="startEditor()">Create Video</button></div>
-<div class="tools"><div onclick="startEditor()">🏃<b>Animation Studio</b></div><div onclick="startEditor()">🎙<b>Audio Upload</b></div><div onclick="startEditor()">📹<b>AI Video</b></div><div onclick="alert('V28 मध्ये add करू')">📄<b>Story Writer</b></div></div></div>
-<h2>Recent Projects</h2><div id="recent" class="projects"></div></section>
+<section id="dashboard" class="page active"><div class="hero"><h1>AI Animation Studio V28</h1><p>Walk, Talk, Jump, Dance, Fight आणि emotions working</p><div class="prompt"><input id="dashPrompt" value="गावात एक मुलगा राहत होता"><button onclick="startEditor()">Create Video</button></div><div class="tools"><div onclick="startEditor()">🏃<b>Character Engine</b></div><div onclick="startEditor()">🎙<b>Audio + Talk</b></div><div onclick="startEditor()">🎬<b>Timeline</b></div><div onclick="startEditor()">⬇<b>Export</b></div></div></div><h2>Recent Projects</h2><div id="recent" class="projects"></div></section>
 <section id="editor" class="page"><div class="editor">
 <div class="leftTools"><button onclick="focusPanel('characters')">🏃<span>Char</span></button><button onclick="focusPanel('backgrounds')">🏞<span>BG</span></button><button onclick="addScene()">➕<span>Scene</span></button><button onclick="uploadAudioClick()">🎵<span>Audio</span></button><button onclick="addTextScene()">🔤<span>Text</span></button></div>
-<div class="center">
-<div class="top"><button onclick="showPage('dashboard')">← Back</button><b>ANIMATION STUDIO V27 FIXED</b><button onclick="saveProject()">💾 Save</button><button class="primary" onclick="exportVideo()">⬇ Export</button></div>
-<canvas id="canvas" width="1280" height="720"></canvas>
+<div class="center"><div class="top"><button onclick="showPage('dashboard')">← Back</button><b>ANIMATION STUDIO V28</b><button onclick="saveProject()">💾 Save</button><button class="primary" onclick="exportVideo()">⬇ Export</button></div><canvas id="canvas" width="1280" height="720"></canvas>
 <div class="actionPanel"><button onclick="setAction('Idle')">🙂 Idle</button><button onclick="setAction('Walking')">🚶 Walk</button><button onclick="setAction('Talking')">🗣 Talk</button><button onclick="setAction('Jump')">⬆ Jump</button><button onclick="setAction('Fight')">👊 Fight</button><button onclick="setAction('Dance')">💃 Dance</button><button onclick="setAction('Happy')">😊 Happy</button><button onclick="setAction('Scared')">😨 Scared</button><button onclick="setAction('Angry')">😠 Angry</button><label class="audioBtn">🎵 Audio<input id="audioInput" type="file" accept="audio/*" onchange="uploadAudio(event)"></label><audio id="audio" controls></audio></div>
-<div class="playbar"><button onclick="prevScene()">⏮</button><button class="primary" onclick="playPreview()">▶ Play</button><button onclick="stopPreview()">⏸ Pause</button><button onclick="nextScene()">⏭</button><button onclick="zoomOut()">−</button><button onclick="zoomIn()">+</button></div>
-<div class="timeline"><div class="row"><b>Scenes</b><div id="sceneTrack"></div></div><div class="row"><b>Action</b><div id="actionTrack"></div></div><div class="row"><b>Audio</b><div id="audioTrack" class="audioTrack">No audio loaded</div></div></div>
-</div>
+<div class="playbar"><button onclick="prevScene()">⏮</button><button class="primary" onclick="playPreview()">▶ Play</button><button onclick="stopPreview()">⏸ Stop</button><button onclick="nextScene()">⏭</button><button onclick="zoomOut()">−</button><button onclick="zoomIn()">+</button></div>
+<div class="timeline"><div class="row"><b>Scenes</b><div id="sceneTrack"></div></div><div class="row"><b>Character</b><div id="charTrack"></div></div><div class="row"><b>Action</b><div id="actionTrack"></div></div><div class="row"><b>Audio</b><div id="audioTrack" class="audioTrack">No audio loaded</div></div></div></div>
 <div class="right"><h3>Scene Editor</h3><textarea id="sceneEdit"></textarea><select id="pos" onchange="updateScene()"><option value="center">Center</option><option value="left">Left</option><option value="right">Right</option></select><button class="primary full" onclick="updateScene()">✅ Update Scene</button><button class="full" onclick="duplicateScene()">📋 Duplicate</button><button class="danger full" onclick="deleteScene()">🗑 Delete Scene</button><h3 id="charactersTitle">Characters</h3><div id="chars" class="cards"></div><h3 id="backgroundsTitle">Backgrounds</h3><div id="bgs" class="cards"></div></div>
 </div></section>
 <section id="projects" class="page"><div class="panel"><h2>Saved Projects</h2><div id="projectsList"></div><button class="danger" onclick="clearProjects()">Clear Projects</button></div></section>
-</main></div><div id="loading" class="loading">Rendering video...</div><script src="script.js"></script>
-</body></html>
+</main></div><div id="loading" class="loading">Rendering video...</div><script src="script.js"></script></body></html>
