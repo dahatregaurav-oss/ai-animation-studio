@@ -1,0 +1,1 @@
+const c=document.getElementById('character');const s=document.getElementById('scene');let x=100;s.onclick=(e)=>{c.className='walk';let t=e.clientX;let i=setInterval(()=>{if(x<t)x+=2;else if(x>t)x-=2;else{clearInterval(i);c.className='idle'}c.style.left=x+'px'},10)};
